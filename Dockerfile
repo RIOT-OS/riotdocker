@@ -2,7 +2,8 @@
 # RIOT Dockerfile
 #
 # the resulting image will contain everything needed to build RIOT for all
-# supported platforms.
+# supported platforms. This is the largest build image, it takes about 1.5 GB in
+# total.
 #
 # Setup: (only needed once per Dockerfile change)
 # 1. install docker, add yourself to docker group, enable docker, relogin
