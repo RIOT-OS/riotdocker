@@ -1,8 +1,8 @@
 #
 # RIOT Dockerfile
 #
-# the resulting image will contain everything needed to build all of the
-# supported platforms for RIOT.
+# the resulting image will contain everything needed to build RIOT for all
+# supported platforms.
 #
 # Setup: (only needed once per Dockerfile change)
 # 1. install docker, add yourself to docker group, enable docker, relogin
