@@ -1,8 +1,8 @@
 #
 # RIOT Dockerfile
 #
-# the resulting image will contain everything needed to build all of the
-# supported platforms for RIOT.
+# the resulting image will contain everything needed to build RIOT for ARM bare
+# metal platforms.
 #
 # Setup: (only needed once per Dockerfile change)
 # 1. install docker, add yourself to docker group, enable docker, relogin
@@ -14,7 +14,8 @@
 
 # Ubuntu 14.04 requires a third-party PPA (terry.guo/gcc-arm-embedded below) for
 # Cortex-M development, at least for a fully functional newlib and stdlibc++.
-#FROM ubuntu:trusty # Ubuntu 14.04
+# Ubuntu 14.04
+#FROM ubuntu:trusty
 # Debian wheezy (stable) is also lacking proper newlib and stdlibc++ for arm-none-eabi.
 
 # The below base images do not need any extra PPAs for building any RIOT platform.
@@ -73,24 +74,9 @@ RUN apt-get -y install \
     libstdc++-arm-none-eabi-newlib \
     libnewlib-dev
 
-# MSP430 development (about 120 MB installed)
-# RUN apt-get -y install \
-#     gcc-msp430
-#
-# # AVR development (about 110 MB installed)
-# RUN apt-get -y install \
-#     gcc-avr \
-#     binutils-avr \
-#     avr-libc
-
 # LLVM/Clang build environment (about 125 MB installed)
 RUN apt-get -y install \
     llvm
-
-# # x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
-# RUN apt-get -y install \
-#     qemu-system-x86
-
 
 RUN mkdir -p /data/riotbuild
 WORKDIR /data/riotbuild
