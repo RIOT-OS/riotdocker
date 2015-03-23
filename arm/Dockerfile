@@ -12,7 +12,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM gebart/riotbuild:native-only
+FROM riot/riotbuild:native-only
 
 MAINTAINER Joakim Gebart <joakim.gebart@eistec.se>
 
