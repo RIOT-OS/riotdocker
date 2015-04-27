@@ -55,9 +55,12 @@ RUN apt-get -y dist-upgrade
 RUN apt-get -y install \
     build-essential \
     curl \
+    cppcheck \
+    doxygen \
     gcc-multilib \
     g++-multilib \
     git \
+    graphviz \
     libpcre3 \
     pcregrep \
     python \
@@ -91,7 +94,6 @@ RUN apt-get -y install \
 # x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
 RUN apt-get -y install \
     qemu-system-x86
-
 
 RUN mkdir -p /data/riotbuild
 WORKDIR /data/riotbuild
