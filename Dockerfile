@@ -45,11 +45,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # the install command below if using the above PPA as the gcc package has
 # everything included.
 
-# Fetch package repository
-RUN apt-get update
-
-# Upgrade all system packages to latest available version
-RUN apt-get -y dist-upgrade
+# Fetch package repository and upgrade all system packages to latest available version
+RUN apt-get update && apt-get -y dist-upgrade
 
 # native platform development and build system functionality (about 400 MB installed)
 RUN apt-get -y install \
