@@ -59,6 +59,7 @@ RUN apt-get -y install \
     git \
     graphviz \
     libpcre3 \
+    parallel \
     pcregrep \
     python \
     python3 \
