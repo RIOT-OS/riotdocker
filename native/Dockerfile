@@ -12,27 +12,17 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-# Ubuntu 14.04
-#FROM ubuntu:trusty
-# Ubuntu 14.10
-#FROM ubuntu:utopic
-# Ubuntu 15.04
-#FROM ubuntu:vivid
-# same as jessie?
-#FROM debian:testing
-# same as testing?
 FROM debian:jessie
-# Debian unstable
-#FROM debian:sid
-# probably not a good idea to use this for your build needs.
-#FROM debian:experimental
 
 MAINTAINER Joakim Gebart <joakim.gebart@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Add backports repository for gcc-arm-none-eabi 4.9 on jessie
 # Fetch package repository and upgrade all system packages to latest available version
-RUN apt-get update && apt-get -y dist-upgrade
+RUN echo 'deb http://httpredir.debian.org/debian jessie-backports main' > \
+    /etc/apt/sources.list.d/backports.list && \
+    apt-get update && apt-get -y dist-upgrade
 
 # native platform development and build system functionality (about 400 MB installed)
 RUN apt-get -y install \
