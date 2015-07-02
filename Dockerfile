@@ -53,6 +53,7 @@ RUN echo 'deb http://httpredir.debian.org/debian jessie-backports main' > \
 
 # native platform development and build system functionality (about 400 MB installed)
 RUN apt-get -y install \
+    bsdmainutils \
     build-essential \
     curl \
     cppcheck \
