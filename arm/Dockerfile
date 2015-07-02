@@ -31,7 +31,8 @@ ENV DEBIAN_FRONTEND noninteractive
 #RUN apt-get update
 
 # Cortex-M development (about 550 MB installed)
-RUN apt-get -y install \
+RUN apt-get -t jessie-backports -y install \
+    binutils-arm-none-eabi \
     gcc-arm-none-eabi \
     libnewlib-arm-none-eabi \
     libstdc++-arm-none-eabi-newlib \
