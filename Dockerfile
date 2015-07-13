@@ -91,7 +91,8 @@ RUN apt-get -y install \
 
 # LLVM/Clang build environment (about 125 MB installed)
 RUN apt-get -y install \
-    llvm
+    llvm \
+    clang
 
 # x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
 RUN apt-get -y install \

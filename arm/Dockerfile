@@ -40,7 +40,8 @@ RUN apt-get -t jessie-backports -y install \
 
 # LLVM/Clang build environment (about 125 MB installed)
 RUN apt-get -y install \
-    llvm
+    llvm \
+    clang
 
 RUN mkdir -p /data/riotbuild
 WORKDIR /data/riotbuild
