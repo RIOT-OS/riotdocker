@@ -102,5 +102,9 @@ RUN apt-get -y install \
 # Create working directory for mounting the RIOT sources
 RUN mkdir -p /data/riotbuild
 
+# Set a global system-wide git user and email address
+RUN git config --system user.name "riot" && \
+    git config --system user.email "riot@example.com"
+
 WORKDIR /data/riotbuild
 
