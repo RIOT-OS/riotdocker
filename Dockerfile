@@ -32,7 +32,7 @@ FROM debian:jessie
 # probably not a good idea to use this for your build needs.
 #FROM debian:experimental
 
-MAINTAINER Joakim Gebart <joakim.gebart@eistec.se>
+MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 

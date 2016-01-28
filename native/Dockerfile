@@ -14,7 +14,7 @@
 
 FROM debian:jessie
 
-MAINTAINER Joakim Gebart <joakim.gebart@eistec.se>
+MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
