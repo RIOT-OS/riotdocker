@@ -106,5 +106,8 @@ RUN mkdir -p /data/riotbuild
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
 
-WORKDIR /data/riotbuild
+# Copy our entry point script (signal wrapper)
+COPY run.sh /run.sh
+ENTRYPOINT ["/bin/bash", "/run.sh"]
 
+WORKDIR /data/riotbuild
