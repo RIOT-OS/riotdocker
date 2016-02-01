@@ -13,7 +13,7 @@ terminateall() {
 }
 
 runcommand() {
-    "$@" &
+    "$@" <&0 &
     masterpid="$!"
     trap "terminateall $masterpid" EXIT SIGINT SIGTERM
 
