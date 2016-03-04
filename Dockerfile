@@ -55,6 +55,7 @@ RUN echo 'deb http://httpredir.debian.org/debian jessie-backports main' > \
 RUN apt-get -y install \
     bsdmainutils \
     build-essential \
+    cmake \
     curl \
     cppcheck \
     doxygen \
