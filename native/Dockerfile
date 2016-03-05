@@ -14,7 +14,7 @@
 
 FROM debian:jessie
 
-MAINTAINER Joakim Gebart <joakim.gebart@eistec.se>
+MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -45,6 +45,14 @@ RUN apt-get -y install \
 #     llvm \
 #     clang
 
-RUN mkdir -p /data/riotbuild
-WORKDIR /data/riotbuild
+# Set a global system-wide git user and email address
+RUN git config --system user.name "riot" && \
+    git config --system user.email "riot@example.com"
 
+RUN mkdir -p /data/riotbuild
+
+# Copy our entry point script (signal wrapper)
+COPY run.sh /run.sh
+ENTRYPOINT ["/bin/bash", "/run.sh"]
+
+WORKDIR /data/riotbuild
