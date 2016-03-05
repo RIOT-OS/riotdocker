@@ -16,14 +16,20 @@ runcommand() {
     "$@" <&0 &
     masterpid="$!"
     trap "terminateall $masterpid" EXIT SIGINT SIGTERM
+    retval="0"
 
     # Wait for the top level child process to terminate
     while kill -0 $masterpid > /dev/null 2>&1; do
-        wait
+        wait $masterpid
+        retval="$?"
     done
+    return "$retval"
 }
 
 runcommand "$@"
+status="$?"
 
 # no need to run the EXIT handler on a clean exit
 trap - EXIT
+
+exit "$status"
