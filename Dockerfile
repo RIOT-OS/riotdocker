@@ -68,6 +68,7 @@ RUN apt-get -y install \
     pcregrep \
     python \
     python3 \
+    python3-pexpect \
     p7zip \
     subversion \
     unzip \
