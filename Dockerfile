@@ -112,4 +112,7 @@ RUN git config --system user.name "riot" && \
 COPY run.sh /run.sh
 ENTRYPOINT ["/bin/bash", "/run.sh"]
 
+# By default, run a shell when no command is specified on the docker command line
+CMD ["/bin/bash"]
+
 WORKDIR /data/riotbuild
