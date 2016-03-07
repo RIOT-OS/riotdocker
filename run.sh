@@ -26,7 +26,14 @@ runcommand() {
     return "$retval"
 }
 
-runcommand "$@"
+if [ $# = 0 ]; then
+    echo "$0: No command specified" >&2
+    # docker run also exits with error code 125 when no command is specified and
+    # no custom entry point is used
+    exit 125
+else
+    runcommand "$@"
+fi
 status="$?"
 
 # no need to run the EXIT handler on a clean exit
