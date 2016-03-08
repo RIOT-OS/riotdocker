@@ -13,43 +13,21 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-# Ubuntu 14.04 requires a third-party PPA (terry.guo/gcc-arm-embedded below) for
-# Cortex-M development, at least for a fully functional newlib and stdlibc++.
-#FROM ubuntu:trusty # Ubuntu 14.04
-# Debian wheezy (stable) is also lacking proper newlib and stdlibc++ for arm-none-eabi.
-
-# The below base images do not need any extra PPAs for building any RIOT platform.
-# Ubuntu 14.10
-#FROM ubuntu:utopic
-# Ubuntu 15.04
-#FROM ubuntu:vivid
-# same as jessie?
-#FROM debian:testing
-# same as testing?
-FROM debian:jessie
-# Debian unstable
-#FROM debian:sid
-# probably not a good idea to use this for your build needs.
-#FROM debian:experimental
+FROM ubuntu:wily
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# For Ubuntu 14.04 only:
-#RUN echo "deb http://ppa.launchpad.net/terry.guo/gcc-arm-embedded/ubuntu trusty main" > /etc/apt/sources.list.d/gcc-arm-embedded.list
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key FE324A81C208C89497EFC6246D1D8367A3421AFB
-# You may need to specify the exact version of gcc-arm-none-eabi to install
-# below, or else the old Debian version might get pulled in.
-# Also, remove libnewlib-arm-none-eabi and libstdc++-arm-none-eabi-newlib from
-# the install command below if using the above PPA as the gcc package has
-# everything included.
+# arm-embedded toolchain PPA
+RUN \
+    echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu wily main" \
+     > /etc/apt/sources.list.d/gcc-arm-embedded.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
+    --recv-keys B4D03348F75E3362B1E1C2A1D1FAA6ECF64D33B0
 
-# Add backports repository for gcc-arm-none-eabi 4.9 on jessie
 # Fetch package repository and upgrade all system packages to latest available version
-RUN echo 'deb http://httpredir.debian.org/debian jessie-backports main' > \
-    /etc/apt/sources.list.d/backports.list && \
-    apt-get update && apt-get -y dist-upgrade
+RUN apt-get update && apt-get -y dist-upgrade
 
 # native platform development and build system functionality (about 400 MB installed)
 RUN apt-get -y install \
@@ -75,12 +53,8 @@ RUN apt-get -y install \
     wget
 
 # Cortex-M development (about 550 MB installed)
-RUN apt-get -t jessie-backports -y install \
-    binutils-arm-none-eabi \
-    gcc-arm-none-eabi \
-    libnewlib-arm-none-eabi \
-    libstdc++-arm-none-eabi-newlib \
-    libnewlib-dev
+RUN apt-get -y install \
+    gcc-arm-embedded
 
 # MSP430 development (about 120 MB installed)
 RUN apt-get -y install \
