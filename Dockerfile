@@ -19,61 +19,69 @@ MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# arm-embedded toolchain PPA
+# The following package groups will be installed:
+# - upgrade all system packages to latest available version
+# - native platform development and build system functionality (about 400 MB installed)
+# - Cortex-M development (about 550 MB installed), through the gcc-arm-embedded PPA
+# - MSP430 development (about 120 MB installed)
+# - AVR development (about 110 MB installed)
+# - LLVM/Clang build environment (about 125 MB installed)
+# - x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
+# All apt files will be deleted afterwards to reduce the size of the container image.
+# This is all done in a single RUN command to reduce the number of layers and to
+# allow the cleanup to actually save space.
+# Total size without cleaning is approximately 1.525 GB (2016-03-08)
+# After adding the cleanup commands the size is approximately 1.497 GB
 RUN \
+    echo 'Adding gcc-arm-embedded PPA' >&2 && \
     echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu wily main" \
      > /etc/apt/sources.list.d/gcc-arm-embedded.list && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
-    --recv-keys B4D03348F75E3362B1E1C2A1D1FAA6ECF64D33B0
-
-# Fetch package repository and upgrade all system packages to latest available version
-RUN apt-get update && apt-get -y dist-upgrade
-
-# native platform development and build system functionality (about 400 MB installed)
-RUN apt-get -y install \
-    bsdmainutils \
-    build-essential \
-    cmake \
-    curl \
-    cppcheck \
-    doxygen \
-    gcc-multilib \
-    g++-multilib \
-    git \
-    graphviz \
-    libpcre3 \
-    parallel \
-    pcregrep \
-    python \
-    python3 \
-    python3-pexpect \
-    p7zip \
-    subversion \
-    unzip \
-    wget
-
-# Cortex-M development (about 550 MB installed)
-RUN apt-get -y install \
-    gcc-arm-embedded
-
-# MSP430 development (about 120 MB installed)
-RUN apt-get -y install \
-    gcc-msp430
-
-# AVR development (about 110 MB installed)
-RUN apt-get -y install \
-    gcc-avr \
-    binutils-avr \
-    avr-libc
-
-# LLVM/Clang build environment (about 125 MB installed)
-RUN apt-get -y install \
-    llvm \
-    clang
-
-# x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
-RUN apt-get -y install \
-    qemu-system-x86
+    --recv-keys B4D03348F75E3362B1E1C2A1D1FAA6ECF64D33B0 && \
+    echo 'Upgrading all system packages to the latest available versions' >&2 && \
+    apt-get update && apt-get -y dist-upgrade \
+    && echo 'Installing native toolchain and build system functionality' >&2 && \
+    apt-get -y install \
+        bsdmainutils \
+        build-essential \
+        cmake \
+        curl \
+        cppcheck \
+        doxygen \
+        gcc-multilib \
+        g++-multilib \
+        git \
+        graphviz \
+        libpcre3 \
+        parallel \
+        pcregrep \
+        python \
+        python3 \
+        python3-pexpect \
+        p7zip \
+        subversion \
+        unzip \
+        wget \
+    && echo 'Installing Cortex-M toolchain' >&2 && \
+    apt-get -y install \
+        gcc-arm-embedded \
+    && echo 'Installing MSP430 toolchain' >&2 && \
+    apt-get -y install \
+        gcc-msp430 \
+    && echo 'Installing AVR toolchain' >&2 && \
+    apt-get -y install \
+        gcc-avr \
+        binutils-avr \
+        avr-libc \
+    && echo 'Installing LLVM/Clang toolchain' >&2 && \
+    apt-get -y install \
+        llvm \
+        clang \
+    && echo 'Installing x86 bare metal emulation' >&2 && \
+    apt-get -y install \
+        qemu-system-x86 \
+    && echo 'Cleaning up installation files' >&2 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create working directory for mounting the RIOT sources
 RUN mkdir -p /data/riotbuild
