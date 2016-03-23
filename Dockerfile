@@ -49,6 +49,7 @@ RUN \
         cppcheck \
         doxygen \
         gcc-multilib \
+        gdb \
         g++-multilib \
         git \
         graphviz \
