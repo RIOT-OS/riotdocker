@@ -13,7 +13,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:wily
+FROM ubuntu:xenial
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
@@ -34,7 +34,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # After adding the cleanup commands the size is approximately 1.497 GB
 RUN \
     echo 'Adding gcc-arm-embedded PPA' >&2 && \
-    echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu wily main" \
+    echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu xenial main" \
      > /etc/apt/sources.list.d/gcc-arm-embedded.list && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
     --recv-keys B4D03348F75E3362B1E1C2A1D1FAA6ECF64D33B0 && \
