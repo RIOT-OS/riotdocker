@@ -26,6 +26,10 @@ runcommand() {
     return "$retval"
 }
 
+# create passwd entry for current uid, fix HOME variable
+create_user $(id -u)
+export HOME=/data/riotbuild
+
 if [ $# = 0 ]; then
     echo "$0: No command specified" >&2
     # docker run also exits with error code 125 when no command is specified and
