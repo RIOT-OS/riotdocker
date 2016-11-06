@@ -44,6 +44,7 @@ RUN \
     apt-get -y install \
         bsdmainutils \
         build-essential \
+        ccache \
         cmake \
         curl \
         cppcheck \
