@@ -85,6 +85,14 @@ RUN \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Install MIPS binary toolchain
+RUN mkdir -p /opt && \
+        wget -q http://codescape-mips-sdk.imgtec.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
+        | tar -C /opt -xz
+
+ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
+ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
+
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
 RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
