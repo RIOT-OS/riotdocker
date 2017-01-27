@@ -92,8 +92,11 @@ RUN \
     apt-get -y install \
         libsocketcan-dev:i386 \
         libsocketcan2:i386 \
+    && echo 'Installing dwq dependencies' >&2 && \
+    apt-get -y install \
+        python3-pip autossh \
     && echo 'Cleaning up installation files' >&2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install CMake 3.10
 RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
@@ -108,6 +111,17 @@ RUN mkdir -p /opt && \
 ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
 
+# install dwq (disque work queue)
+RUN pip3 install dwq
+
+# install testrunner dependencies
+RUN pip3 install click
+
+# get git-cache directly from github
+RUN wget https://github.com/kaspar030/git-cache/raw/master/git-cache \
+        -O /usr/bin/git-cache \
+        && chmod a+x /usr/bin/git-cache
+
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
 RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
@@ -116,11 +130,14 @@ RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.
     && rm /tmp/create_user.c
 
 # Create working directory for mounting the RIOT sources
-RUN mkdir -m 777 -p /data/riotbuild
+RUN mkdir -p /data/riotbuild && chmod a+rwx /data/riotbuild
 
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
+
+# install murdock slave startup script
+COPY murdock_slave.sh /usr/bin/murdock_slave
 
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh
