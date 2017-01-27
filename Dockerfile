@@ -101,7 +101,7 @@ RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.
     && rm /tmp/create_user.c
 
 # Create working directory for mounting the RIOT sources
-RUN mkdir -p /data/riotbuild
+RUN mkdir -m 777 -p /data/riotbuild
 
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
