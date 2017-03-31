@@ -28,9 +28,7 @@ runcommand() {
 
 # create passwd entry for current uid, fix HOME variable
 # only execute, if the current uid does not exist.
-if id $(id -u) >/dev/null 2>/dev/null; then
-    echo "Not creating user with uid $(id -u) because the user already exists"
-else
+if ! id $(id -u) >/dev/null 2>/dev/null; then
     create_user $(id -u)
 fi
 export HOME=/data/riotbuild
