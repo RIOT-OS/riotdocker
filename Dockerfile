@@ -46,6 +46,7 @@ RUN \
         build-essential \
         ccache \
         cmake \
+        coccinelle \
         curl \
         cppcheck \
         doxygen \
