@@ -107,6 +107,9 @@ RUN mkdir -p /data/riotbuild
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
 
+# Simple root password in case we want to customize the container
+RUN echo "root:root" | chpasswd
+
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh
 ENTRYPOINT ["/bin/bash", "/run.sh"]
