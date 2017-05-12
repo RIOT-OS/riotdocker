@@ -96,7 +96,7 @@ ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
 
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
-RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
+RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" -DSHELL=\"/bin/bash\" /tmp/create_user.c -o /usr/local/bin/create_user \
     && chown root:root /usr/local/bin/create_user \
     && chmod u=rws,g=x,o=- /usr/local/bin/create_user
 
