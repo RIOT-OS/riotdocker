@@ -33,6 +33,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Total size without cleaning is approximately 1.525 GB (2016-03-08)
 # After adding the cleanup commands the size is approximately 1.497 GB
 RUN \
+    dpkg --add-architecture i386 >&2 && \
     echo 'Adding gcc-arm-embedded PPA' >&2 && \
     echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu xenial main" \
      > /etc/apt/sources.list.d/gcc-arm-embedded.list && \
@@ -83,6 +84,10 @@ RUN \
     && echo 'Installing x86 bare metal emulation' >&2 && \
     apt-get -y install \
         qemu-system-x86 \
+    && echo 'Installing socketCAN' >&2 && \
+    apt-get -y install \
+        libsocketcan-dev:i386 \
+        libsocketcan2:i386 \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
