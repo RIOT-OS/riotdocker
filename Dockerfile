@@ -62,6 +62,9 @@ RUN \
         python \
         python3 \
         python3-pexpect \
+        python3-crypto \
+        python3-pyasn1 \
+        python3-ecdsa \
         p7zip \
         subversion \
         unzip \
