@@ -68,6 +68,7 @@ RUN \
         p7zip \
         subversion \
         unzip \
+        vim-common \
         wget \
     && echo 'Installing Cortex-M toolchain' >&2 && \
     apt-get -y install \
