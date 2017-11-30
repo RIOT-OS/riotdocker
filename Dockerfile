@@ -46,7 +46,6 @@ RUN \
         bsdmainutils \
         build-essential \
         ccache \
-        cmake \
         coccinelle \
         curl \
         cppcheck \
@@ -95,6 +94,12 @@ RUN \
         libsocketcan2:i386 \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install CMake 3.10
+RUN mkdir -p /opt && \
+    wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
+    | tar -C /opt -xz && cd /opt/cmake-3.10.0/ && ./bootstrap && \
+    make && make install && cd && rm -rf /opt/cmake-3.10.0
 
 # Install MIPS binary toolchain
 RUN mkdir -p /opt && \
