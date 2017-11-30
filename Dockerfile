@@ -65,7 +65,7 @@ RUN \
         python3-crypto \
         python3-pyasn1 \
         python3-ecdsa \
-        python3-pep8 \
+        python3-flake8 \
         p7zip \
         subversion \
         unzip \
