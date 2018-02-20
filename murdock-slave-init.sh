@@ -9,6 +9,7 @@ MURDOCK_HOME=$(eval echo ~${MURDOCK_USER})
 MURDOCK_QUEUES=${MURDOCK_QUEUES:-default}
 MURDOCK_WORKERS=${MURDOCK_WORKERS:-4}
 MURDOCK_TMPFS_SIZE=${MURDOCK_TMPFS_SIZE:-$((${MURDOCK_WORKERS}/2))g}
+MURDOCK_CONTAINER=kaspar030/riotdocker:latest
 
 mount_ccache_tmpfs() {
     local ccache_dir=${MURDOCK_HOME}/.ccache
@@ -46,15 +47,16 @@ _start() {
         -e DWQ_SSH \
         --security-opt seccomp=unconfined \
         --name ${MURDOCK_INSTANCE} \
-        kaspar030/riotdocker:latest murdock_slave \
+        ${MURDOCK_CONTAINER} \
+        murdock_slave \
         --name $MURDOCK_HOSTNAME \
         --queues ${MURDOCK_HOSTNAME} ${MURDOCK_QUEUES} \
         ${MURDOCK_WORKERS:+--jobs ${MURDOCK_WORKERS}}
 }
 
 _stop() {
-	docker kill ${MURDOCK_INSTANCE}
-        docker rm ${MURDOCK_INSTANCE} >/dev/null 2>&1
+    docker kill ${MURDOCK_INSTANCE}
+    docker rm ${MURDOCK_INSTANCE} >/dev/null 2>&1
 }
 
 case $1 in
@@ -64,7 +66,7 @@ case $1 in
     start)
         if [ "$MURDOCK_SYSTEMD" != "1" ]; then
             _stop
-            docker pull kaspar030/riotdocker:latest
+            docker pull ${MURDOCK_CONTAINER}
         fi
         _start
         ;;
