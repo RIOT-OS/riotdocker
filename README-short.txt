@@ -1,1 +1,1 @@
-RIOT build environments http://riot-os.org
+RIOT Murdock build container http://riot-os.org
