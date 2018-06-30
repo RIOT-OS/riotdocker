@@ -13,7 +13,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
@@ -127,11 +127,6 @@ RUN mkdir -p /opt && \
     echo 'Deduplicating binaries' >&2 && \
     cd /opt/gnu-mcu-eclipse/riscv-none-gcc/*/riscv-none-embed/bin && \
     for f in *; do rm "$f" && ln "../../bin/riscv-none-embed-$f" "$f"; done && cd -
-
-# HACK download arch linux' flex dynamic library
-RUN wget -q https://sgp.mirror.pkgbuild.com/core/os/x86_64/flex-2.6.4-1-x86_64.pkg.tar.xz -O- \
-        | tar -C / -xJ usr/lib/libfl.so.2.0.0
-RUN ldconfig
 
 ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-2-20180111-2230/bin
 
