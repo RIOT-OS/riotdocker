@@ -43,6 +43,7 @@ RUN \
     apt-get update && apt-get -y dist-upgrade \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
     apt-get -y install \
+        automake \
         bsdmainutils \
         build-essential \
         ccache \
