@@ -128,12 +128,13 @@ RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.
     && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
     && rm /tmp/create_user.c
 
-# Installs the complete ESP8266 toolchain in /opt/esp (170 MB after cleanup) from binaries
+# Installs the complete ESP8266 toolchain in /opt/esp (146 MB after cleanup) from binaries
 RUN echo 'Adding esp8266 toolchain' >&2 && \
     cd /opt && \
     git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-toolchain.git esp && \
     cd esp && \
-    git checkout -q df38b06 
+    git checkout -q df38b06 && \
+    rm -rf .git 
 
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
