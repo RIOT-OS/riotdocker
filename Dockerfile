@@ -68,6 +68,7 @@ RUN \
         unzip \
         vim-common \
         wget \
+        xsltproc \
     && echo 'Installing MSP430 toolchain' >&2 && \
     apt-get -y install \
         gcc-msp430 \
