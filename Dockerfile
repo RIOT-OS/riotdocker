@@ -58,6 +58,7 @@ RUN \
         graphviz \
         libpcre3 \
         libtool \
+        m4 \
         parallel \
         pcregrep \
         python \
