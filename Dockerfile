@@ -103,7 +103,7 @@ RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
 
 # Install MIPS binary toolchain
 RUN mkdir -p /opt && \
-        wget -q http://codescape.mips.com/components/toolchain/2017.10-07/Codescape.GNU.Tools.Package.2017.10-07.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
+        wget -q 'https://codescape.mips.com/components/toolchain/2017.10-08/Codescape.GNU.Tools.Package.2017.10-08.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz' -O- \
         | tar -C /opt -xz
 
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2017.10-08
