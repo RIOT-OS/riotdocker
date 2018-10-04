@@ -109,8 +109,8 @@ RUN mkdir -p /opt && \
     cd /opt/mips-mti-elf/*/mips-mti-elf/bin && \
     for f in *; do rm "$f" && ln "../../bin/mips-mti-elf-$f" "$f"; done && cd -
 
-ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
+ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
 RUN mkdir -p /opt && \
