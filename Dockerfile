@@ -26,7 +26,6 @@ ENV DEBIAN_FRONTEND noninteractive
 # - MSP430 development (about 120 MB installed)
 # - AVR development (about 110 MB installed)
 # - LLVM/Clang build environment (about 125 MB installed)
-# - x86 bare metal emulation (about 125 MB installed) (this pulls in all of X11)
 # All apt files will be deleted afterwards to reduce the size of the container image.
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
@@ -86,9 +85,6 @@ RUN \
     apt-get -y install \
         llvm \
         clang \
-    && echo 'Installing x86 bare metal emulation' >&2 && \
-    apt-get -y install \
-        qemu-system-x86 \
     && echo 'Installing socketCAN' >&2 && \
     apt-get -y install \
         libsocketcan-dev:i386 \
