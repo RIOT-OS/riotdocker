@@ -103,7 +103,7 @@ RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
 
 # Install MIPS binary toolchain
 RUN mkdir -p /opt && \
-        wget -q http://codescape-mips-sdk.imgtec.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
+        wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
         | tar -C /opt -xz
 
 ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
@@ -134,7 +134,7 @@ RUN echo 'Adding esp8266 toolchain' >&2 && \
     git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-toolchain.git esp && \
     cd esp && \
     git checkout -q df38b06 && \
-    rm -rf .git 
+    rm -rf .git
 
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
