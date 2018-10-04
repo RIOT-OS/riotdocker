@@ -33,11 +33,6 @@ ENV DEBIAN_FRONTEND noninteractive
 # After adding the cleanup commands the size is approximately 1.497 GB
 RUN \
     dpkg --add-architecture i386 >&2 && \
-    echo 'Adding gcc-arm-embedded PPA' >&2 && \
-    echo "deb http://ppa.launchpad.net/team-gcc-arm-embedded/ppa/ubuntu xenial main" \
-     > /etc/apt/sources.list.d/gcc-arm-embedded.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
-    --recv-keys B4D03348F75E3362B1E1C2A1D1FAA6ECF64D33B0 && \
     echo 'Upgrading all system packages to the latest available versions' >&2 && \
     apt-get update && apt-get -y dist-upgrade \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
@@ -72,9 +67,6 @@ RUN \
         unzip \
         vim-common \
         wget \
-    && echo 'Installing Cortex-M toolchain' >&2 && \
-    apt-get -y install \
-        gcc-arm-embedded \
     && echo 'Installing MSP430 toolchain' >&2 && \
     apt-get -y install \
         gcc-msp430 \
@@ -93,6 +85,18 @@ RUN \
         libsocketcan2:i386 \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install ARM GNU embedded toolchain
+# For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
+    mkdir -p /opt && \
+    curl -L 'https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update' -o - \
+        | tar -C /opt -jx && \
+    echo 'Removing documentation' >&2 && \
+    rm -rf /opt/gcc-arm-none-eabi-*/share/doc
+    # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
+
+ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
 
 # Install CMake 3.10
 RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
