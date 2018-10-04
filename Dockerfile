@@ -7,7 +7,12 @@
 #
 # Setup: (only needed once per Dockerfile change)
 # 1. install docker, add yourself to docker group, enable docker, relogin
-# 2. # docker build -t riotbuild .
+# 2a. without openocd:                 # docker build -t riotbuild .
+# 2b. with openocd (default version):  # docker build -t riotbuild \
+#                                                     --build-arg BUILD_OPENOCD=1 .
+# 2c. with openocd (specific version): # docker build -t riotbuild \
+#                                                     --build-arg BUILD_OPENOCD=1 \
+#                                                     --build-arg OPENOCD_VERSION=master .
 #
 # Usage:
 # 3. cd to riot root
@@ -18,6 +23,9 @@ FROM ubuntu:xenial
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
+
+# If BUILD_OPENOCD is set, OpenOCD will be built
+ARG BUILD_OPENOCD=0
 
 # The following package groups will be installed:
 # - upgrade all system packages to latest available version
@@ -106,6 +114,17 @@ RUN mkdir -p /opt && \
         wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
         | tar -C /opt -xz
 
+# Install dependencies for OpenOCD
+RUN [ $BUILD_OPENOCD -ne 0 ] && \
+    apt-get update && \
+    echo 'Installing dependencies for OpenOCD' >&2 && \
+    apt-get -y install libtool automake pkg-config libusb-1.0-0-dev libhidapi-dev && \
+    echo 'Install other useful tools' >&2 && \
+    apt-get -y install usbutils net-tools tmux telnet && \
+    echo 'Cleaning up installation files' >&2 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* || \
+    /bin/true
+
 ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
 
@@ -123,7 +142,7 @@ ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-2-20180111-2230/bin
 
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
-RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
+RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" -DSHELL=\"/bin/bash\" /tmp/create_user.c -o /usr/local/bin/create_user \
     && chown root:root /usr/local/bin/create_user \
     && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
     && rm /tmp/create_user.c
@@ -141,9 +160,25 @@ ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 # Create working directory for mounting the RIOT sources
 RUN mkdir -m 777 -p /data/riotbuild
 
+# Change ownership of /data/riotbuild from root to default user
+RUN chown 1000:1000 /data/riotbuild
+
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
     git config --system user.email "riot@example.com"
+
+# Simple root password in case we want to customize the container
+RUN echo "root:root" | chpasswd
+
+# OpenOCD version. The name must match a git tag in the OpenOCD repository
+ARG OPENOCD_VERSION="v0.10.0"
+
+# Build OpenOCD
+RUN mkdir -p /data/openocd_build
+ADD build_openocd.sh /data/openocd_build/build_openocd.sh
+RUN [ $BUILD_OPENOCD -ne 0 ] && \
+    OPENOCD_VERSION=$OPENOCD_VERSION /data/openocd_build/build_openocd.sh || \
+    /bin/true
 
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh

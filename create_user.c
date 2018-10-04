@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     unsigned uid = atoi(argv[1]);
     char buf[128];
 
-    sprintf(buf, "/usr/sbin/useradd -u %u -d %s -r -g 0 -N %s", uid, HOMEDIR, USERNAME);
+    sprintf(buf, "/usr/sbin/useradd -u %u -d %s -r -g 0 -N %s -s %s", uid, HOMEDIR, USERNAME, SHELL);
     system(buf);
     return 0;
 }
