@@ -134,7 +134,7 @@ RUN echo 'Adding esp8266 toolchain' >&2 && \
     git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-toolchain.git esp && \
     cd esp && \
     git checkout -q df38b06 && \
-    rm -rf .git 
+    rm -rf .git
 
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
