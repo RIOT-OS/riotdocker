@@ -90,8 +90,10 @@ RUN \
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
 RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     mkdir -p /opt && \
-    curl -L 'https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update' -o - \
-        | tar -C /opt -jx && \
+    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 'https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update' && \
+    echo '299ebd3f1c2c90930d28ab82e5d8d6c0 */opt/gcc-arm-none-eabi.tar.bz2' | md5sum -c && \
+    tar -C /opt -jxf /opt/gcc-arm-none-eabi.tar.bz2 && \
+    rm -f /opt/gcc-arm-none-eabi.tar.bz2 && \
     echo 'Removing documentation' >&2 && \
     rm -rf /opt/gcc-arm-none-eabi-*/share/doc
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
