@@ -104,7 +104,10 @@ RUN mkdir -p /opt && \
         wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
         | tar -C /opt -xz && \
     echo 'Removing documentation and translations' >&2 && \
-    rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale}
+    rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale} && \
+    echo 'Deduplicating binaries' >&2 && \
+    cd /opt/mips-mti-elf/*/mips-mti-elf/bin && \
+    for f in *; do rm "$f" && ln "../../bin/mips-mti-elf-$f" "$f"; done && cd -
 
 ENV PATH $PATH:/opt/mips-mti-elf/2016.05-03/bin
 ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
