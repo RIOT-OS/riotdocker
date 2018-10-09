@@ -4,4 +4,6 @@ sudo: required
 services:
   - docker
 
-script: docker build -t riotdocker .
+script:
+  - docker build -t riotdocker .
+  - docker image ls riotdocker:latest
