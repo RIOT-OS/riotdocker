@@ -41,6 +41,7 @@ RUN \
         bsdmainutils \
         build-essential \
         ccache \
+        cmake \
         coccinelle \
         curl \
         cppcheck \
@@ -99,11 +100,6 @@ RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
 
 ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
-
-# Install CMake 3.10
-RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
-    | tar -C /tmp -xz && cd /tmp/cmake-3.10.0/ && ./bootstrap && \
-    make && make install && cd && rm -rf /tmp/cmake-3.10.0
 
 # Install MIPS binary toolchain
 RUN mkdir -p /opt && \
