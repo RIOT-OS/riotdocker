@@ -3,3 +3,5 @@ ecdsa
 flake8
 pexpect
 pycrypto
+riot-pal
+robotframework
