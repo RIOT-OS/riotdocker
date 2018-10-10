@@ -1,0 +1,5 @@
+asn1
+ecdsa
+flake8
+pexpect
+pycrypto

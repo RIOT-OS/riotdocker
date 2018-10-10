@@ -57,11 +57,7 @@ RUN \
         pcregrep \
         python \
         python3 \
-        python3-pexpect \
-        python3-crypto \
-        python3-pyasn1 \
-        python3-ecdsa \
-        python3-flake8 \
+        python3-pip \
         p7zip \
         subversion \
         unzip \
@@ -85,6 +81,12 @@ RUN \
         libsocketcan2:i386 \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# install required python packages from file
+COPY pydeps.txt /tmp/pydeps.txt
+RUN echo 'Installing python3 packages' >&2 \
+    && pip3 install -r /tmp/pydeps.txt \
+    && rm /tmp/pydeps.txt
 
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
