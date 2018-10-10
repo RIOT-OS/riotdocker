@@ -13,7 +13,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
@@ -41,6 +41,7 @@ RUN \
         bsdmainutils \
         build-essential \
         ccache \
+        cmake \
         coccinelle \
         curl \
         cppcheck \
@@ -100,11 +101,6 @@ RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
 
 ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
 
-# Install CMake 3.10
-RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
-    | tar -C /tmp -xz && cd /tmp/cmake-3.10.0/ && ./bootstrap && \
-    make && make install && cd && rm -rf /tmp/cmake-3.10.0
-
 # Install MIPS binary toolchain
 RUN mkdir -p /opt && \
         wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
@@ -127,11 +123,6 @@ RUN mkdir -p /opt && \
     echo 'Deduplicating binaries' >&2 && \
     cd /opt/gnu-mcu-eclipse/riscv-none-gcc/*/riscv-none-embed/bin && \
     for f in *; do rm "$f" && ln "../../bin/riscv-none-embed-$f" "$f"; done && cd -
-
-# HACK download arch linux' flex dynamic library
-RUN wget -q https://sgp.mirror.pkgbuild.com/core/os/x86_64/flex-2.6.4-1-x86_64.pkg.tar.xz -O- \
-        | tar -C / -xJ usr/lib/libfl.so.2.0.0
-RUN ldconfig
 
 ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-2-20180111-2230/bin
 
