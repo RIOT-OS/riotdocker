@@ -62,6 +62,7 @@ RUN \
         python3-pyasn1 \
         python3-ecdsa \
         python3-flake8 \
+        python-serial \
         p7zip \
         subversion \
         unzip \
@@ -142,8 +143,8 @@ RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.
     && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
     && rm /tmp/create_user.c
 
-# Installs the complete ESP8266 toolchain in /opt/esp (146 MB after cleanup) from binaries
-RUN echo 'Adding esp8266 toolchain' >&2 && \
+# Install complete ESP8266 toolchain in /opt/esp (146 MB after cleanup) 
+RUN echo 'Installing ESP8266 toolchain' >&2 && \
     cd /opt && \
     git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-toolchain.git esp && \
     cd esp && \
@@ -151,6 +152,32 @@ RUN echo 'Adding esp8266 toolchain' >&2 && \
     rm -rf .git
 
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
+
+# Install ESP32 toolchain in /opt/esp (181 MB after cleanup)
+RUN echo 'Installing ESP32 toolchain' >&2 && \
+    mkdir -p /opt/esp && \
+    cd /opt/esp && \
+    git clone --recursive https://github.com/espressif/esp-idf.git && \
+    cd esp-idf && \
+    git checkout -q f198339ec09e90666150672884535802304d23ec && \
+    cd components/esp32/lib && \
+    git checkout -q 534a9b14101af90231d40a4f94924d67bc848d5f && \
+    cd /opt/esp/esp-idf && \
+    rm -rf .git* docs examples make tools && \
+    rm -f add_path.sh CONTRIBUTING.rst Kconfig Kconfig.compiler && \
+    cd components && \
+    rm -rf app_trace app_update aws_iot bootloader bt coap console cxx \
+           esp_adc_cal espcoredump esp_http_client esp-tls expat fatfs \
+           freertos idf_test jsmn json libsodium log lwip mbedtls mdns \
+           micro-ecc nghttp openssl partition_table pthread sdmmc spiffs \
+           tcpip_adapter ulp vfs wear_levelling xtensa-debug-module && \
+    find . -name '*.[csS]' -exec rm {} \; && \
+    cd /opt/esp && \
+    git clone https://github.com/gschorcht/xtensa-esp32-elf.git && \
+    cd xtensa-esp32-elf && \
+    git checkout -q ca40fb4c219accf8e7c8eab68f58a7fc14cadbab
+
+ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
 # Create working directory for mounting the RIOT sources
 RUN mkdir -m 777 -p /data/riotbuild
