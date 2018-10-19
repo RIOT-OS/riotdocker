@@ -107,6 +107,7 @@ RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
     make && make install && cd && rm -rf /tmp/cmake-3.10.0
 
 # Install MIPS binary toolchain
+# For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
 RUN mkdir -p /opt && \
         wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
         | tar -C /opt -xz && \
