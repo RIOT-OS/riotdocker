@@ -36,10 +36,11 @@ RUN \
     echo 'Upgrading all system packages to the latest available versions' >&2 && \
     apt-get update && apt-get -y dist-upgrade \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
-    apt-get -y install \
+    apt-get -y --no-install-recommends install \
         automake \
         bsdmainutils \
         build-essential \
+        ca-certificates \
         ccache \
         coccinelle \
         curl \
@@ -50,6 +51,7 @@ RUN \
         g++-multilib \
         git \
         graphviz \
+        less \
         libpcre3 \
         libtool \
         m4 \
@@ -64,25 +66,28 @@ RUN \
         python3-flake8 \
         python-serial \
         p7zip \
+        rsync \
+        ssh-client \
         subversion \
         unzip \
         vim-common \
         wget \
         xsltproc \
     && echo 'Installing MSP430 toolchain' >&2 && \
-    apt-get -y install \
+    apt-get -y --no-install-recommends install \
         gcc-msp430 \
+        msp430-libc \
     && echo 'Installing AVR toolchain' >&2 && \
-    apt-get -y install \
+    apt-get -y --no-install-recommends install \
         gcc-avr \
         binutils-avr \
         avr-libc \
     && echo 'Installing LLVM/Clang toolchain' >&2 && \
-    apt-get -y install \
+    apt-get -y --no-install-recommends install \
         llvm \
         clang \
     && echo 'Installing socketCAN' >&2 && \
-    apt-get -y install \
+    apt-get -y --no-install-recommends install \
         libsocketcan-dev:i386 \
         libsocketcan2:i386 \
     && echo 'Cleaning up installation files' >&2 && \
