@@ -87,6 +87,7 @@ RUN \
     apt-get -y --no-install-recommends install \
         llvm \
         clang \
+        clang-tools \
     && echo 'Installing socketCAN' >&2 && \
     apt-get -y --no-install-recommends install \
         libsocketcan-dev:i386 \
