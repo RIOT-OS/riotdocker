@@ -131,7 +131,7 @@ RUN mkdir -p /opt && \
     for f in *; do rm "$f" && ln "../../bin/riscv-none-embed-$f" "$f"; done && cd -
 
 # HACK download arch linux' flex dynamic library
-RUN wget -q https://sgp.mirror.pkgbuild.com/core/os/x86_64/flex-2.6.4-1-x86_64.pkg.tar.xz -O- \
+RUN wget -q https://sgp.mirror.pkgbuild.com/core/os/x86_64/flex-2.6.4-2-x86_64.pkg.tar.xz -O- \
         | tar -C / -xJ usr/lib/libfl.so.2.0.0
 RUN ldconfig
 
