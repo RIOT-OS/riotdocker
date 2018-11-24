@@ -125,7 +125,7 @@ ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
 RUN mkdir -p /opt && \
-        wget -q https://github.com/gnu-mcu-eclipse/riscv-none-gcc/releases/download/v7.2.0-2-20180110/gnu-mcu-eclipse-riscv-none-gcc-7.2.0-2-20180111-2230-centos64.tgz -O- \
+        wget -q https://github.com/gnu-mcu-eclipse/riscv-none-gcc/releases/download/v7.2.0-4-20180606/gnu-mcu-eclipse-riscv-none-gcc-7.2.0-4-20180606-1631-centos64.tgz -O- \
         | tar -C /opt -xz && \
     echo 'Removing documentation' >&2 && \
     rm -rf /opt/gnu-mcu-eclipse/riscv-none-gcc/*/share/doc && \
@@ -133,12 +133,7 @@ RUN mkdir -p /opt && \
     cd /opt/gnu-mcu-eclipse/riscv-none-gcc/*/riscv-none-embed/bin && \
     for f in *; do rm "$f" && ln "../../bin/riscv-none-embed-$f" "$f"; done && cd -
 
-# HACK download arch linux' flex dynamic library
-RUN wget -q https://sgp.mirror.pkgbuild.com/core/os/x86_64/flex-2.6.4-2-x86_64.pkg.tar.xz -O- \
-        | tar -C / -xJ usr/lib/libfl.so.2.0.0
-RUN ldconfig
-
-ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-2-20180111-2230/bin
+ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/7.2.0-4-20180606-1631/bin
 
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
