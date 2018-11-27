@@ -13,7 +13,7 @@
 # 3. cd to riot root
 # 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
@@ -42,6 +42,7 @@ RUN \
         build-essential \
         ca-certificates \
         ccache \
+        cmake \
         coccinelle \
         curl \
         cppcheck \
@@ -86,6 +87,7 @@ RUN \
     apt-get -y --no-install-recommends install \
         llvm \
         clang \
+        clang-tools \
     && echo 'Installing socketCAN' >&2 && \
     apt-get -y --no-install-recommends install \
         libsocketcan-dev:i386 \
@@ -106,11 +108,6 @@ RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
 
 ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
-
-# Install CMake 3.10
-RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz -O- \
-    | tar -C /tmp -xz && cd /tmp/cmake-3.10.0/ && ./bootstrap && \
-    make && make install && cd && rm -rf /tmp/cmake-3.10.0
 
 # Install MIPS binary toolchain
 # For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
