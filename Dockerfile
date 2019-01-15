@@ -55,6 +55,7 @@ RUN \
         less \
         libpcre3 \
         libtool \
+        lsb-release \
         m4 \
         parallel \
         pcregrep \
