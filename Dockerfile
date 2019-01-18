@@ -167,6 +167,7 @@ RUN echo 'Installing ESP8266 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 
 # Install ESP32 toolchain in /opt/esp (181 MB after cleanup)
+# remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
 RUN echo 'Installing ESP32 toolchain' >&2 && \
     mkdir -p /opt/esp && \
     cd /opt/esp && \
