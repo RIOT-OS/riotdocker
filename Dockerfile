@@ -189,6 +189,17 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
+# Install GNU Tools for TI MSP430 microcontroller family (binary distribution, release 6_0_1_0)
+RUN echo 'Installing TI MSP430 microcontroller family toolchain (binary distribution, release 6_0_1_0' >&2 && \
+    mkdir -p /opt && \
+    cd /opt && \
+    wget -q http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/6_1_0_0/exports/msp430-gcc-7.3.2.154_linux64.7z && \
+    7zr x msp430-gcc-7.3.2.154_linux64.7z && \
+    rm msp430-gcc-7.3.2.154_linux64.7z && \
+    mv /opt/msp430-gcc-7.3.2.154_linux64 /opt/msp430-gcc
+
+ENV PATH $PATH:/opt/msp430-gcc/bin
+
 # Create working directory for mounting the RIOT sources
 RUN mkdir -m 777 -p /data/riotbuild
 
