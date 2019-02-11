@@ -196,8 +196,14 @@ RUN echo 'Installing TI MSP430 microcontroller family toolchain (binary distribu
     wget -q http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/6_1_0_0/exports/msp430-gcc-7.3.2.154_linux64.7z && \
     7zr x msp430-gcc-7.3.2.154_linux64.7z && \
     rm msp430-gcc-7.3.2.154_linux64.7z && \
-    mv /opt/msp430-gcc-7.3.2.154_linux64 /opt/msp430-gcc
+    mv /opt/msp430-gcc-7.3.2.154_linux64 /opt/msp430-gcc && \
+    wget http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/latest/exports/msp430-gcc-support-files-1.206.zip && \
+    unzip msp430-gcc-support-files-1.206.zip && \
+    mv msp430-gcc-support-files/include/*.ld /opt/msp430-gcc/msp430-elf/lib && \
+    mv msp430-gcc-support-files/include/* /opt/msp430-gcc/msp430-elf/include && \
+    rm -rf msp430-gcc-support-files msp430-gcc-support-files-1.206.zip
 
+ENV MSP430_GCC_INCLUDE_DIR /opt/msp430-gcc/msp430-elf/include
 ENV PATH $PATH:/opt/msp430-gcc/bin
 
 # Create working directory for mounting the RIOT sources
