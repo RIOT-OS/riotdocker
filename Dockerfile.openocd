@@ -6,6 +6,7 @@ RUN apt-get update && apt-get -y dist-upgrade \
     libhidapi-hidraw0 \
     libhidapi-dev \
     libusb-1.0 \
+    libudev-devi \
     pkg-config
 
 # Build openocd from source
@@ -17,7 +18,7 @@ RUN mkdir -p opt \
     && ./configure --enable-stlink --enable-jlink --enable-ftdi --enable-cmsis-dap \
     && make -j"$(nproc)" \
     && make install-strip \
-    && cd .. \ 
+    && cd .. \
     && rm -rf openocd \
     && rm -rf /var/lib/apt/lists/*
 
