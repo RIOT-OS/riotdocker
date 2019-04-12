@@ -167,12 +167,10 @@ ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
 RUN echo 'Installing ESP32 toolchain' >&2 && \
     mkdir -p /opt/esp && \
     cd /opt/esp && \
-    git clone --recursive https://github.com/espressif/esp-idf.git && \
+    git clone https://github.com/espressif/esp-idf.git && \
     cd esp-idf && \
     git checkout -q f198339ec09e90666150672884535802304d23ec && \
-    cd components/esp32/lib && \
-    git checkout -q 534a9b14101af90231d40a4f94924d67bc848d5f && \
-    cd /opt/esp/esp-idf && \
+    git submodule update --init --recursive && \
     rm -rf .git* docs examples make tools && \
     rm -f add_path.sh CONTRIBUTING.rst Kconfig Kconfig.compiler && \
     cd components && \
