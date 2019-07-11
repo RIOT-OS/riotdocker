@@ -19,6 +19,9 @@ MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
 # The following package groups will be installed:
 # - upgrade all system packages to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
