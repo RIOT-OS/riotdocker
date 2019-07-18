@@ -115,10 +115,10 @@ ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
 
 # Install MIPS binary toolchain
 # For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
-ARG MIPS_VERSION=2017.10-08
+ARG MIPS_VERSION=2018.09-03
 RUN echo 'Installing mips-mti-elf toolchain from mips.com' >&2 && \
     mkdir -p /opt && \
-    curl -L 'https://codescape.mips.com/components/toolchain/${MIPS_VERSION}/Codescape.GNU.Tools.Package.${MIPS_VERSION}.for.MIPS.MTI.Bare.Metal.CentOS-6.x86_64.tar.gz' -o - \
+    curl -L "https://codescape.mips.com/components/toolchain/${MIPS_VERSION}/Codescape.GNU.Tools.Package.${MIPS_VERSION}.for.MIPS.MTI.Bare.Metal.CentOS-6.x86_64.tar.gz" -o - \
         | tar -C /opt -zx && \
     echo 'Removing documentation and translations' >&2 && \
     rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale} && \
