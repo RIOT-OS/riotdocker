@@ -4,3 +4,6 @@ flake8==3.5.0
 pexpect==4.2.1
 pycrypto==2.6.1
 pyserial==3.4
+ed25519==1.4
+cbor==1.0.0
+cryptography==2.6.1
