@@ -7,3 +7,4 @@ pyserial==3.4
 ed25519==1.4
 cbor==1.0.0
 cryptography==2.6.1
+scapy>=2.4.3
