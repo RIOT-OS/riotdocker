@@ -70,6 +70,7 @@ RUN \
         ssh-client \
         subversion \
         unzip \
+        vera++ \
         vim-common \
         wget \
         xsltproc \
