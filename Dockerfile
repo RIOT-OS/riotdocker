@@ -96,13 +96,9 @@ RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install required python packages from file
-COPY install_requirements.txt /tmp/install_requirements.txt
 COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 \
-    && pip3 install --no-cache-dir -r /tmp/install_requirements.txt \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
-    && pip3 uninstall -y -r /tmp/install_requirements.txt \
-    && rm /tmp/install_requirements.txt \
     && rm /tmp/requirements.txt
 
 # Install ARM GNU embedded toolchain

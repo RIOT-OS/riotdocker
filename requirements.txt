@@ -1,6 +1,8 @@
 pyasn1==0.4.2
 ecdsa==0.13
 flake8==3.5.0
+setuptools==39.0.1
+wheel==0.30.0
 pexpect==4.2.1
 pycrypto==2.6.1
 pyserial==3.4
