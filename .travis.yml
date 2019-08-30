@@ -6,7 +6,7 @@ services:
   - docker
 
 script:
-  - docker build -t riotdocker .
+  - docker build --pull -t riotdocker .
   - docker image ls riotdocker:latest
   - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b 2019.07-branch
   - DOCKER_IMAGE=riotdocker:latest
