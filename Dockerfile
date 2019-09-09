@@ -97,12 +97,6 @@ RUN \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# install required python packages from file
-COPY requirements.txt /tmp/requirements.txt
-RUN echo 'Installing python3 packages' >&2 \
-    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
-    && rm /tmp/requirements.txt
-
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
 RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
@@ -189,6 +183,12 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
     git checkout -q ca40fb4c219accf8e7c8eab68f58a7fc14cadbab
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
+
+# install required python packages from file
+COPY requirements.txt /tmp/requirements.txt
+RUN echo 'Installing python3 packages' >&2 \
+    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt
 
 # Create working directory for mounting the RIOT sources
 RUN mkdir -m 777 -p /data/riotbuild
