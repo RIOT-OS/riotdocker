@@ -187,6 +187,10 @@ ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 # Install msp430-elf-gcc
 # see https://aur.archlinux.org/packages/msp430-elf-gcc
 
+# silence autotools/make
+ENV GNUMAKEFLAGS=--no-print-directory
+ENV V=0
+
 ENV MSP430_GCC_BINUTILS_VER=2.32
 ENV MSP430_GCC_BINUTILS_SHA=0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
 RUN mkdir -p /mspgcc && \
@@ -197,7 +201,9 @@ RUN mkdir -p /mspgcc && \
     cd /mspgcc/binutils-$MSP430_GCC_BINUTILS_VER && \
     mkdir binutils-build && \
     cd binutils-build && \
-    ../configure --target=msp430-elf \
+    ../configure \
+      --silent \
+      --target=msp430-elf \
       --prefix=/usr \
       --disable-nls \
       --program-prefix=msp430-elf- \
@@ -208,9 +214,10 @@ RUN mkdir -p /mspgcc && \
       --build=$CHOST \
       --disable-shared \
       --enable-lto && \
+
     make configure-host && \
     make && \
-    make install && \
+    make  install && \
     rm -rf /mspgcc/binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz /mspgcc/binutils-$MSP430_GCC_BINUTILS_VER
 
 ENV MSP430_GCC_VER=9.2.0
@@ -246,6 +253,7 @@ RUN CFLAGS="-O2 -pipe" CXXFLAGS="-O2 -pipe" CFLAGS_FOR_TARGET="-Os -pipe" CXXFLA
     ls -ahl && \
     cd gcc-build && \
     ../configure \
+      --silent \
       --prefix=/usr \
       --program-prefix=msp430-elf- \
       --target=msp430-elf \
@@ -279,6 +287,7 @@ RUN CFLAGS_FOR_TARGET="-Os -g -ffunction-sections -fdata-sections" mkdir -p /msp
     mkdir newlib-build && \
     cd newlib-build && \
     ../configure \
+     --silent \
      --prefix=/usr \
      --target=msp430-elf \
      --disable-newlib-supplied-syscalls \
@@ -292,7 +301,7 @@ RUN CFLAGS_FOR_TARGET="-Os -g -ffunction-sections -fdata-sections" mkdir -p /msp
      --enable-lite-exit \
      --enable-newlib-global-atexit \
      --disable-nls && \
-   make -j1 && \
+   make  && \
    make install && \
    mkdir -p /usr/msp430-elf/usr && \
    ln -sf /usr/msp430-elf/include /usr/msp430-elf/usr/include && \
@@ -308,6 +317,7 @@ RUN cd /mspgcc/gcc-$MSP430_GCC_VER && \
     ls -ahl && \
     cd gcc-build && \
     ../configure \
+      --silent \
       --prefix=/usr \
       --program-prefix=msp430-elf- \
       --target=msp430-elf \
