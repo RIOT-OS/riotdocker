@@ -8,3 +8,4 @@ ed25519==1.4
 cbor==1.0.0
 cryptography==2.6.1
 scapy>=2.4.3
+protobuf-compiler>=3.0.0
