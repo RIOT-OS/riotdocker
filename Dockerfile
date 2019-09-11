@@ -184,6 +184,171 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
+# Install msp430-elf-gcc
+# see https://aur.archlinux.org/packages/msp430-elf-gcc
+
+ENV MSP430_GCC_BINUTILS_VER=2.32
+ENV MSP430_GCC_BINUTILS_SHA=0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
+RUN mkdir -p /mspgcc && \
+    cd /mspgcc && \
+    curl -o binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz ftp://ftp.gnu.org/gnu/binutils/binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz && \
+    echo "$MSP430_GCC_BINUTILS_SHA binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz" | sha256sum -c - && \
+    tar xJf binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz && \
+    cd /mspgcc/binutils-$MSP430_GCC_BINUTILS_VER && \
+    mkdir binutils-build && \
+    cd binutils-build && \
+    ../configure --target=msp430-elf \
+      --prefix=/usr \
+      --disable-nls \
+      --program-prefix=msp430-elf- \
+      --enable-multilib \
+      --disable-werror \
+      --with-sysroot=/usr/msp430-elf \
+      --host=$CHOST \
+      --build=$CHOST \
+      --disable-shared \
+      --enable-lto && \
+    make configure-host && \
+    make && \
+    make install && \
+    rm -rf /mspgcc/binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz /mspgcc/binutils-$MSP430_GCC_BINUTILS_VER
+
+ENV MSP430_GCC_VER=9.2.0
+ENV MSP430_GCC_SHA=ea6ef08f121239da5695f76c9b33637a118dcf63e24164422231917fa61fb206
+ENV MSP430_GCC_ISL_VER=0.21
+ENV MSP430_GCC_ISL_SHA=777058852a3db9500954361e294881214f6ecd4b594c00da5eee974cd6a54960
+
+# dependencies
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install libmpc-dev zlib1g-dev && \
+    echo 'Cleaning up installation files' >&2 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# download isl sources
+RUN mkdir -p /mspgcc && \
+    cd /mspgcc && \
+    curl -o isl-${MSP430_GCC_ISL_VER}.tar.xz http://isl.gforge.inria.fr/isl-${MSP430_GCC_ISL_VER}.tar.xz && \
+    echo "$MSP430_GCC_ISL_SHA isl-$MSP430_GCC_ISL_VER.tar.xz" | sha256sum -c - && \
+    tar xJf isl-${MSP430_GCC_ISL_VER}.tar.xz
+
+# download gcc sources
+RUN mkdir -p /mspgcc && \
+    cd /mspgcc && \
+    curl -o gcc-${MSP430_GCC_VER}.tar.xz ftp://gcc.gnu.org/pub/gcc/releases/gcc-${MSP430_GCC_VER}/gcc-${MSP430_GCC_VER}.tar.xz && \
+    echo "$MSP430_GCC_SHA gcc-$MSP430_GCC_VER.tar.xz" | sha256sum -c - && \
+    tar xJf gcc-${MSP430_GCC_VER}.tar.xz
+
+# compile bootstrapping gcc compiler
+RUN CFLAGS="-O2 -pipe" CXXFLAGS="-O2 -pipe" CFLAGS_FOR_TARGET="-Os -pipe" CXXFLAGS_FOR_TARGET="-Os -pipe" cd /mspgcc/gcc-$MSP430_GCC_VER && \
+    ln -s ../isl-$MSP430_GCC_ISL_VER isl  && \
+    echo $MSP430_GCC_VER > gcc/BASE-VER && \
+    mkdir -p gcc-build && \
+    ls -ahl && \
+    cd gcc-build && \
+    ../configure \
+      --prefix=/usr \
+      --program-prefix=msp430-elf- \
+      --target=msp430-elf \
+      --host=$CHOST \
+      --build=$CHOST \
+      --disable-shared \
+      --disable-nls \
+      --disable-threads \
+      --enable-languages=c \
+      --enable-multilib \
+      --without-headers \
+      --with-newlib \
+      --with-system-zlib \
+      --with-local-prefix=/usr/msp430-elf \
+      --with-sysroot=/usr/msp430-elf \
+      --with-as=/usr/bin/msp430-elf-as \
+      --with-ld=/usr/bin/msp430-elf-ld \
+      --disable-libgomp && \
+    make all-gcc && \
+    make install-gcc
+
+# install newlib for msp430
+ENV MSP430_GCC_NEWLIB_VER=3.1.0
+ENV MSP430_GCC_NEWLIB_SHA=fb4fa1cc21e9060719208300a61420e4089d6de6ef59cf533b57fe74801d102a
+RUN CFLAGS_FOR_TARGET="-Os -g -ffunction-sections -fdata-sections" mkdir -p /mspgcc && \
+    cd /mspgcc && \
+    curl -o newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz ftp://sourceware.org/pub/newlib/newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz && \
+    echo "$MSP430_GCC_NEWLIB_SHA newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz" | sha256sum -c - && \
+    tar xzf newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz && \
+    cd /mspgcc/newlib-${MSP430_GCC_NEWLIB_VER} && \
+    mkdir newlib-build && \
+    cd newlib-build && \
+    ../configure \
+     --prefix=/usr \
+     --target=msp430-elf \
+     --disable-newlib-supplied-syscalls \
+     --enable-newlib-reent-small \
+     --disable-newlib-fseek-optimization \
+     --disable-newlib-wide-orient \
+     --enable-newlib-nano-formatted-io \
+     --disable-newlib-io-float \
+     --enable-newlib-nano-malloc \
+     --disable-newlib-unbuf-stream-opt \
+     --enable-lite-exit \
+     --enable-newlib-global-atexit \
+     --disable-nls && \
+   make -j1 && \
+   make install && \
+   mkdir -p /usr/msp430-elf/usr && \
+   ln -sf /usr/msp430-elf/include /usr/msp430-elf/usr/include && \
+   ln -sf /usr/msp430-elf/lib /usr/msp430-elf/usr/lib && \
+   rm -rf /mspgcc/newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz /mspgcc/newlib-${MSP430_GCC_NEWLIB_VER}
+
+# install msp430-elf-gcc, final version
+RUN cd /mspgcc/gcc-$MSP430_GCC_VER && \
+    ln -s ../isl-$MSP430_GCC_ISL_VER isl  && \
+    echo $MSP430_GCC_VER > gcc/BASE-VER && \
+    rm -rf gcc-build && \
+    mkdir -p gcc-build && \
+    ls -ahl && \
+    cd gcc-build && \
+    ../configure \
+      --prefix=/usr \
+      --program-prefix=msp430-elf- \
+      --target=msp430-elf \
+      --host=$CHOST \
+      --build=$CHOST \
+      --disable-shared \
+      --disable-nls \
+      --disable-threads \
+      --enable-languages=c,c++ \
+      --enable-multilib \
+      --with-system-zlib \
+      --with-local-prefix=/usr/msp430-elf \
+      --with-sysroot=/usr/msp430-elf \
+      --with-as=/usr/bin/msp430-elf-as \
+      --with-ld=/usr/bin/msp430-elf-ld \
+      --disable-libgomp \
+      --disable-libssp \
+      --enable-interwork \
+      --enable-addons && \
+    make all-gcc all-target-libgcc && \
+    make install-gcc install-target-libgcc && \
+    rm -rf /mspgcc
+
+ENV MSP430_GCC_SUPPORT_VER=1.207
+ENV MSP430_GCC_SUPPORT_MD5=27b6a533378a901be96efb896714b0ec
+
+# download msp430 headers
+RUN mkdir -p /mspgcc && \
+    cd /mspgcc && \
+    curl -L -o msp430-gcc-support-files-${MSP430_GCC_SUPPORT_VER}.zip http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/latest/exports/msp430-gcc-support-files-${MSP430_GCC_SUPPORT_VER}.zip && \
+    echo "$MSP430_GCC_SUPPORT_MD5 msp430-gcc-support-files-${MSP430_GCC_SUPPORT_VER}.zip" | md5sum -c - && \
+    unzip msp430-gcc-support-files-${MSP430_GCC_SUPPORT_VER}.zip && \
+    cd msp430-gcc-support-files/include && \
+    install -dm755 "/usr/msp430-elf/lib" && \
+    install -m644 *.ld "/usr/msp430-elf/lib" && \
+    install -dm755 "/usr/msp430-elf/include" && \
+    install -m644 *.h "/usr/msp430-elf/include" && \
+    install -dm755 "/usr/msp430-elf/include/devices" && \
+    install -m644 devices.csv "/usr/msp430-elf/include/devices" && \
+    rm -rf /mspgcc
+
 # install required python packages from file
 COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 \
