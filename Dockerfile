@@ -191,7 +191,7 @@ ENV MSP430_GCC_BINUTILS_VER=2.32
 ENV MSP430_GCC_BINUTILS_SHA=0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
 RUN mkdir -p /mspgcc && \
     cd /mspgcc && \
-    curl -o binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz ftp://ftp.gnu.org/gnu/binutils/binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz && \
+    curl -L -o binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz https://ftp.gnu.org/gnu/binutils/binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz && \
     echo "$MSP430_GCC_BINUTILS_SHA binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz" | sha256sum -c - && \
     tar xJf binutils-${MSP430_GCC_BINUTILS_VER}.tar.xz && \
     cd /mspgcc/binutils-$MSP430_GCC_BINUTILS_VER && \
@@ -227,14 +227,14 @@ RUN apt-get update && \
 # download isl sources
 RUN mkdir -p /mspgcc && \
     cd /mspgcc && \
-    curl -o isl-${MSP430_GCC_ISL_VER}.tar.xz http://isl.gforge.inria.fr/isl-${MSP430_GCC_ISL_VER}.tar.xz && \
+    curl -L -o isl-${MSP430_GCC_ISL_VER}.tar.xz http://isl.gforge.inria.fr/isl-${MSP430_GCC_ISL_VER}.tar.xz && \
     echo "$MSP430_GCC_ISL_SHA isl-$MSP430_GCC_ISL_VER.tar.xz" | sha256sum -c - && \
     tar xJf isl-${MSP430_GCC_ISL_VER}.tar.xz
 
 # download gcc sources
 RUN mkdir -p /mspgcc && \
     cd /mspgcc && \
-    curl -o gcc-${MSP430_GCC_VER}.tar.xz ftp://gcc.gnu.org/pub/gcc/releases/gcc-${MSP430_GCC_VER}/gcc-${MSP430_GCC_VER}.tar.xz && \
+    curl -L -o gcc-${MSP430_GCC_VER}.tar.xz https://gcc.gnu.org/pub/gcc/releases/gcc-${MSP430_GCC_VER}/gcc-${MSP430_GCC_VER}.tar.xz && \
     echo "$MSP430_GCC_SHA gcc-$MSP430_GCC_VER.tar.xz" | sha256sum -c - && \
     tar xJf gcc-${MSP430_GCC_VER}.tar.xz
 
@@ -272,7 +272,7 @@ ENV MSP430_GCC_NEWLIB_VER=3.1.0
 ENV MSP430_GCC_NEWLIB_SHA=fb4fa1cc21e9060719208300a61420e4089d6de6ef59cf533b57fe74801d102a
 RUN CFLAGS_FOR_TARGET="-Os -g -ffunction-sections -fdata-sections" mkdir -p /mspgcc && \
     cd /mspgcc && \
-    curl -o newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz ftp://sourceware.org/pub/newlib/newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz && \
+    curl -o newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz https://sourceware.org/pub/newlib/newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz && \
     echo "$MSP430_GCC_NEWLIB_SHA newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz" | sha256sum -c - && \
     tar xzf newlib-${MSP430_GCC_NEWLIB_VER}.tar.gz && \
     cd /mspgcc/newlib-${MSP430_GCC_NEWLIB_VER} && \
