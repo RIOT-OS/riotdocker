@@ -61,6 +61,7 @@ RUN \
         m4 \
         parallel \
         pcregrep \
+        protobuf-compiler \
         python \
         python3 \
         python3-dev \
