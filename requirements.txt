@@ -1,3 +1,4 @@
+# Required python libraries
 pyasn1==0.4.2
 ecdsa==0.13
 flake8==3.5.0
