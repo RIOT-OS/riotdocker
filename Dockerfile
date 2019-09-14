@@ -47,6 +47,7 @@ RUN \
         ccache \
         cmake \
         coccinelle \
+        codespell \
         curl \
         cppcheck \
         doxygen \
