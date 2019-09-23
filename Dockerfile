@@ -15,7 +15,7 @@
 
 FROM ubuntu:bionic
 
-MAINTAINER Joakim Nohlgård <joakim.nohlgard@eistec.se>
+LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
