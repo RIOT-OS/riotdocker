@@ -115,16 +115,19 @@ ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
 
 # Install MIPS binary toolchain
 # For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
-RUN mkdir -p /opt && \
-        wget -q https://codescape.mips.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Bare.Metal.CentOS-5.x86_64.tar.gz -O- \
-        | tar -C /opt -xz && \
+ARG MIPS_VERSION=2018.09-03
+RUN echo 'Installing mips-mti-elf toolchain from mips.com' >&2 && \
+    mkdir -p /opt && \
+    curl -L "https://codescape.mips.com/components/toolchain/${MIPS_VERSION}/Codescape.GNU.Tools.Package.${MIPS_VERSION}.for.MIPS.MTI.Bare.Metal.CentOS-6.x86_64.tar.gz" -o - \
+        | tar -C /opt -zx && \
     echo 'Removing documentation and translations' >&2 && \
     rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale} && \
-    echo 'Deduplicating binaries' >&2 && \
+    echo 'Deduplicating binaries' && \
     cd /opt/mips-mti-elf/*/mips-mti-elf/bin && \
-    for f in *; do rm "$f" && ln "../../bin/mips-mti-elf-$f" "$f"; done && cd -
+    for f in *; do test -f "../../bin/mips-mti-elf-$f" && ln -f "../../bin/mips-mti-elf-$f" "$f"; done && cd -
 
-ENV MIPS_ELF_ROOT /opt/mips-mti-elf/2016.05-03
+ENV MIPS_ELF_ROOT /opt/mips-mti-elf/${MIPS_VERSION}
+
 ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
