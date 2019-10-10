@@ -1,17 +1,24 @@
 #
 # RIOT Dockerfile
 #
-# the resulting image will contain everything needed to build RIOT for all
+# The resulting image will contain everything needed to build RIOT for all
 # supported platforms. This is the largest build image, it takes about 1.5 GB in
 # total.
 #
-# Setup: (only needed once per Dockerfile change)
-# 1. install docker, add yourself to docker group, enable docker, relogin
-# 2. # docker build -t riotbuild .
+# Setup:
+# 1. Install docker, add yourself to docker group, enable docker, relogin
+#
+# Use prebuild image:
+# 1. Prebuild image can be pulled from Docker Hub registry with:
+#      # docker pull riot/riotbuild
+# 
+# Use own build image:
+# 1. Build own image based on latest base OS image:
+#      # docker build --pull -t riotbuild .
 #
 # Usage:
-# 3. cd to riot root
-# 4. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
+# 1. cd to riot root
+# 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
 FROM ubuntu:bionic
 
@@ -23,21 +30,23 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 # The following package groups will be installed:
-# - upgrade all system packages to latest available version
+# - update the package index files to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
 # - Cortex-M development (about 550 MB installed), through the gcc-arm-embedded PPA
 # - MSP430 development (about 120 MB installed)
 # - AVR development (about 110 MB installed)
 # - LLVM/Clang build environment (about 125 MB installed)
 # All apt files will be deleted afterwards to reduce the size of the container image.
+# The OS must not be updated by apt. Docker image should be build against the latest
+#  updated base OS image. This can be forced with `--pull` flag.
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
 # Total size without cleaning is approximately 1.525 GB (2016-03-08)
 # After adding the cleanup commands the size is approximately 1.497 GB
 RUN \
     dpkg --add-architecture i386 >&2 && \
-    echo 'Upgrading all system packages to the latest available versions' >&2 && \
-    apt-get update && apt-get -y dist-upgrade \
+    echo 'Update the package index files to latest available versions' >&2 && \
+    apt-get update \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
     apt-get -y --no-install-recommends install \
         automake \

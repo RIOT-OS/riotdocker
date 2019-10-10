@@ -1,1 +1,1 @@
-RIOT build environments http://riot-os.org
+RIOT build environments https://riot-os.org
