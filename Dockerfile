@@ -65,6 +65,7 @@ RUN \
         git \
         graphviz \
         less \
+        libffi-dev \
         libpcre3 \
         libtool \
         m4 \
