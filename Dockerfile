@@ -198,6 +198,13 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
+ARG MSP430_URL=https://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/latest/exports
+ARG MSP430_VERSION=8.3.0.16_linux64
+RUN echo 'Installing TI MSP430 ELF toolchain' >&2 && \
+        wget -q ${MSP430_URL}/msp430-gcc-${MSP430_VERSION}.tar.bz2 -O- \
+            | tar -C /opt -xj
+ENV PATH $PATH:/opt/msp430-gcc-${MSP430_VERSION}/bin
+
 # install required python packages from file
 COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 \
