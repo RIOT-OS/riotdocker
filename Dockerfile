@@ -8,8 +8,8 @@
 # Setup:
 # 1. Install docker, add yourself to docker group, enable docker, relogin
 #
-# Use prebuild image:
-# 1. Prebuild image can be pulled from Docker Hub registry with:
+# Use prebuilt image:
+# 1. Prebuilt image can be pulled from Docker Hub registry with:
 #      # docker pull riot/riotbuild
 # 
 # Use own build image:
