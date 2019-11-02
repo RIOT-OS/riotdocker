@@ -1,6 +1,6 @@
 # Required python libraries
 pyasn1==0.4.2
-ecdsa==0.13
+ecdsa==0.13.3
 flake8==3.5.0
 pexpect==4.2.1
 pycrypto==2.6.1
