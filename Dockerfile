@@ -73,6 +73,7 @@ RUN \
         pcregrep \
         protobuf-compiler \
         python \
+        python-protobuf \
         python3 \
         python3-dev \
         python3-pip \
