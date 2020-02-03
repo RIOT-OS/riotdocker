@@ -226,12 +226,17 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
-ARG MSP430_URL=https://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/latest/exports
-ARG MSP430_VERSION=8.3.0.16_linux64
-RUN echo 'Installing TI MSP430 ELF toolchain' >&2 && \
-        wget -q ${MSP430_URL}/msp430-gcc-${MSP430_VERSION}.tar.bz2 -O- \
-            | tar -C /opt -xj
-ENV PATH $PATH:/opt/msp430-gcc-${MSP430_VERSION}/bin
+# RIOT toolchains
+ARG RIOT_TOOLCHAIN_GCC_VERSION=9.2.0
+ARG RIOT_TOOLCHAIN_PACKAGE_VERSION=9
+ARG RIOT_TOOLCHAIN_TAG=20200203165626-106c6b8
+ARG RIOT_TOOLCHAIN_GCCPKGVER=${RIOT_TOOLCHAIN_GCC_VERSION}-${RIOT_TOOLCHAIN_PACKAGE_VERSION}
+ARG RIOT_TOOLCHAIN_SUBDIR=${RIOT_TOOLCHAIN_GCCPKGVER}-${RIOT_TOOLCHAIN_TAG}
+
+ARG MSP430_URL=https://github.com/RIOT-OS/toolchains/releases/download/${RIOT_TOOLCHAIN_SUBDIR}/riot-msp430-elf-${RIOT_TOOLCHAIN_GCCPKGVER}.tgz
+RUN echo 'Installing RIOT MSP430 ELF toolchain' >&2 && \
+        wget -q ${MSP430_URL} -O- | tar -C /opt -xz
+ENV PATH $PATH:/opt/riot-toolchain/msp430-elf/${RIOT_TOOLCHAIN_GCCPKGVER}/bin
 
 # install required python packages from file
 # numpy must be already installed before installing some other requirements (emlearn)
