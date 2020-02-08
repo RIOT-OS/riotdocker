@@ -190,13 +190,14 @@ RUN echo 'Installing ESP8266 toolchain' >&2 && \
     cd /opt/esp && \
     git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-RTOS-SDK.git ESP8266_RTOS_SDK && \
     cd ESP8266_RTOS_SDK/ && \
-    git checkout -q f074414c0705715a44b8e59d53b03d90b7630382 && \
-    rm -rf .git* docs examples make tools && \
+    git checkout -q c0174eff7278eb5beea66ce1f65b7af57432d2a9 && \
+    rm -rf .git* docs examples Kconfig make README.md tools && \
     cd components && \
-    rm -rf app_update aws_iot bootloader cjson coap espos esp-tls freertos \
-           jsmn libsodium log mdns mqtt newlib partition_table pthread \
-           smartconfig_ack spiffs ssl tcpip_adapter vfs && \
-    find . -name '*.[csS]' -exec rm {} \;
+    rm -rf app_update aws_iot bootloader cjson coap espos esptool_py esp-tls \
+           freertos jsmn libsodium log mdns mqtt newlib partition_table \
+           pthread smartconfig_ack spiffs ssl tcpip_adapter vfs && \
+    find . -type f -name '*.[csS]' -exec rm {} \; && \
+    find . -type f -name '*.cpp' -exec rm {} \;
 
 ENV PATH $PATH:/opt/esp/xtensa-esp8266-elf/bin
 ENV ESP8266_RTOS_SDK_DIR /opt/esp/ESP8266_RTOS_SDK
