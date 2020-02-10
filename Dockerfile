@@ -163,23 +163,8 @@ RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.
     && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
     && rm /tmp/create_user.c
 
-# Install complete ESP8266 toolchain in /opt/esp (146 MB after cleanup)
-RUN echo 'Installing ESP8266 toolchain' >&2 && \
-    cd /opt && \
-    git clone https://github.com/gschorcht/RIOT-Xtensa-ESP8266-toolchain.git esp && \
-    cd esp && \
-    git checkout -q df38b06 && \
-    rm -rf .git
-
-ENV PATH $PATH:/opt/esp/esp-open-sdk/xtensa-lx106-elf/bin
-ENV ESP8266_SDK_DIR /opt/esp/esp-open-sdk/sdk
-ENV ESP8266_NEWLIB_DIR /opt/esp/newlib-xtensa
-
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
-# NOTE: We install the toolchain for the RTOS SDK in parallel in the first
-# step and remove the old version as soon as the RIOT port for the ESP8266
-# RTOS SDK has been merged.
 RUN echo 'Installing ESP8266 toolchain' >&2 && \
     mkdir -p /opt/esp && \
     cd /opt/esp && \
