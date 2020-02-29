@@ -227,7 +227,7 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
     cd /opt/esp && \
     git clone https://github.com/gschorcht/xtensa-esp32-elf.git && \
     cd xtensa-esp32-elf && \
-    git checkout -q 9fa454fc178136bc2828a667c73b2667383545e5
+    git checkout -q 414d1f3a577702e927973bd906357ee00d7a6c6c
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
