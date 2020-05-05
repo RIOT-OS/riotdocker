@@ -20,7 +20,7 @@
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
@@ -28,6 +28,13 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
+
+# copy some included packages
+RUN mkdir /pkgs
+COPY files/coccinelle_1.0.8~19.04npalix1_amd64.deb /pkgs/coccinelle_1.0.8~19.04npalix1_amd64.deb
+COPY files/libsocketcan-dev_0.0.11-1_i386.deb /pkgs/libsocketcan-dev_0.0.11-1_i386.deb
+COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
+
 
 # The following package groups will be installed:
 # - update the package index files to latest available version
@@ -56,7 +63,6 @@ RUN \
         ca-certificates \
         ccache \
         cmake \
-        coccinelle \
         curl \
         cppcheck \
         doxygen \
@@ -103,12 +109,11 @@ RUN \
         llvm \
         clang \
         clang-tools \
-    && echo 'Installing socketCAN' >&2 && \
-    apt-get -y --no-install-recommends install \
-        libsocketcan-dev:i386 \
-        libsocketcan2:i386 \
+    && echo 'Installing local packages' >&2 && \
+        apt install -y --no-install-recommends \
+        /pkgs/*.deb \
     && echo 'Cleaning up installation files' >&2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /pkgs
 
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
