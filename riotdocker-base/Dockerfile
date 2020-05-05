@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
