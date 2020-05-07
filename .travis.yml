@@ -8,7 +8,7 @@ services:
 script:
   - docker build --pull -t riotdocker .
   - docker image ls riotdocker:latest
-  - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b 2019.07-branch
+  - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b 2020.04-branch
   - DOCKER_IMAGE=riotdocker:latest
     BUILD_IN_DOCKER=1
     BOARDS="arduino-uno esp32-wroom-32 hifive1 msb-430h native pic32-wifire samr21-xpro"
