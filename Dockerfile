@@ -49,6 +49,7 @@ RUN \
     apt-get update \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
     apt-get -y --no-install-recommends install \
+        afl++ \
         automake \
         bsdmainutils \
         build-essential \
