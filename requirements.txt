@@ -16,3 +16,4 @@ scikit-learn==0.22.1
 joblib==0.14.0
 emlearn==0.10.1
 jinja2==2.11.2
+riotctrl>=0.1.1
