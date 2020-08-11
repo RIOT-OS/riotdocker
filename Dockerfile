@@ -49,6 +49,7 @@ RUN \
     apt-get update \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
     apt-get -y --no-install-recommends install \
+        afl++ \
         automake \
         bsdmainutils \
         build-essential \
@@ -110,17 +111,21 @@ RUN \
 
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+ARG ARM_URLBASE=https://developer.arm.com/-/media/Files/downloads/gnu-rm
+ARG ARM_URL=${ARM_URLBASE}/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2
+ARG ARM_MD5=fe0029de4f4ec43cf7008944e34ff8cc
+ARG ARM_FOLDER=gcc-arm-none-eabi-9-2019-q4-major
 RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     mkdir -p /opt && \
-    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 'https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2?revision=bc2c96c0-14b5-4bb4-9f18-bceb4050fee7?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,7-2018-q2-update' && \
-    echo '299ebd3f1c2c90930d28ab82e5d8d6c0 */opt/gcc-arm-none-eabi.tar.bz2' | md5sum -c && \
+    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 ${ARM_URL} && \
+    echo "${ARM_MD5} /opt/gcc-arm-none-eabi.tar.bz2" | md5sum -c && \
     tar -C /opt -jxf /opt/gcc-arm-none-eabi.tar.bz2 && \
     rm -f /opt/gcc-arm-none-eabi.tar.bz2 && \
     echo 'Removing documentation' >&2 && \
     rm -rf /opt/gcc-arm-none-eabi-*/share/doc
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
 
-ENV PATH ${PATH}:/opt/gcc-arm-none-eabi-7-2018-q2-update/bin
+ENV PATH ${PATH}:/opt/${ARM_FOLDER}/bin
 
 # Install MIPS binary toolchain
 # For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
@@ -208,14 +213,14 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
     cd /opt/esp && \
     git clone https://github.com/gschorcht/xtensa-esp32-elf.git && \
     cd xtensa-esp32-elf && \
-    git checkout -q 9fa454fc178136bc2828a667c73b2667383545e5
+    git checkout -q 414d1f3a577702e927973bd906357ee00d7a6c6c
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
 # RIOT toolchains
-ARG RIOT_TOOLCHAIN_GCC_VERSION=9.2.0
-ARG RIOT_TOOLCHAIN_PACKAGE_VERSION=15
-ARG RIOT_TOOLCHAIN_TAG=20200210104438-76782c7
+ARG RIOT_TOOLCHAIN_GCC_VERSION=10.1.0
+ARG RIOT_TOOLCHAIN_PACKAGE_VERSION=18
+ARG RIOT_TOOLCHAIN_TAG=20200722112854-64162e7
 ARG RIOT_TOOLCHAIN_GCCPKGVER=${RIOT_TOOLCHAIN_GCC_VERSION}-${RIOT_TOOLCHAIN_PACKAGE_VERSION}
 ARG RIOT_TOOLCHAIN_SUBDIR=${RIOT_TOOLCHAIN_GCCPKGVER}-${RIOT_TOOLCHAIN_TAG}
 
