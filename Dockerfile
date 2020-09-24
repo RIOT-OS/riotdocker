@@ -284,4 +284,19 @@ ENTRYPOINT ["/bin/bash", "/run.sh"]
 # By default, run a shell when no command is specified on the docker command line
 CMD ["/bin/bash"]
 
+# get Dockerfile version from build args
+ARG RIOTBUILD_VERSION=unknown
+ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
+
+ARG RIOTBUILD_COMMIT=unknown
+ENV RIOTBUILD_COMMIT $RIOTBUILD_COMMIT
+
+ARG RIOTBUILD_BRANCH=unknown
+ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
+
+# watch for single ">" vs double ">>"!
+RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
+RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
+RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
+
 WORKDIR /data/riotbuild
