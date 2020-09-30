@@ -165,6 +165,18 @@ RUN mkdir -p /opt && \
 
 ENV PATH $PATH:/opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin
 
+# Install picolibc Debian package
+ARG PICOLIBC_VERSION=1.7.9-1
+RUN wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb
+
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
 RUN echo 'Installing ESP8266 toolchain' >&2 && \
