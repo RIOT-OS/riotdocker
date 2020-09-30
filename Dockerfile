@@ -43,6 +43,7 @@ ENV LANG C.UTF-8
 # allow the cleanup to actually save space.
 # Total size without cleaning is approximately 1.525 GB (2016-03-08)
 # After adding the cleanup commands the size is approximately 1.497 GB
+ARG LLVM_VERSION=10
 RUN \
     dpkg --add-architecture i386 >&2 && \
     echo 'Update the package index files to latest available versions' >&2 && \
@@ -100,9 +101,19 @@ RUN \
         avr-libc \
     && echo 'Installing LLVM/Clang toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
+        llvm-${LLVM_VERSION}/bionic-updates \
+        clang-${LLVM_VERSION}/bionic-updates \
+        clang-tools-${LLVM_VERSION}/bionic-updates \
         llvm \
         clang \
-        clang-tools \
+        clang-tools && \
+    SYMS=$(find /usr/bin -type l) && \
+    for file in ${SYMS}; do \
+        SYMTARGET=$(readlink -f ${file}) && \
+        SYMNAME=${file%"-${LLVM_VERSION}"} && \
+        # Filter by symlinks starting with /usr/bin/llvm-${LLVM_VERSION}
+        case "${SYMTARGET}" in "/usr/lib/llvm-${LLVM_VERSION}"* ) ln -sf ${SYMTARGET} ${SYMNAME}; esac \
+    done \
     && echo 'Installing socketCAN' >&2 && \
     apt-get -y --no-install-recommends install \
         libsocketcan-dev:i386 \
