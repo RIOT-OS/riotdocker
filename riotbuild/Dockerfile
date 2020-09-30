@@ -73,7 +73,6 @@ RUN \
         libtool \
         libsdl2-dev:i386 \
         m4 \
-        ninja-build \
         parallel \
         protobuf-compiler \
         python2 \
@@ -252,38 +251,6 @@ RUN echo 'Installing ESP32-S3 toolchain' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xz && \
     pip install --no-cache-dir pyserial
 ENV PATH $PATH:/opt/esp/xtensa-esp32s3-elf/bin
-
-ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
-ARG PICOLIBC_TAG=1.4.6
-ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
-ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
-
-RUN echo 'Building and Installing PicoLIBC' >&2 && \
-    pip3 install --no-cache-dir meson && \
-    mkdir -p /usr/src/picolibc && \
-    cd /usr/src/picolibc/ &&\
-    curl -L -o ${PICOLIBC_ARCHIVE} ${PICOLIBC_URL} && \
-    tar -xf ${PICOLIBC_ARCHIVE} && \
-    cd picolibc-${PICOLIBC_TAG}
-
-COPY cross-riscv-none-embed.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
-
-RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
-    which riscv-none-embed-gcc && \
-    ls -al /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin && \
-    mkdir build-arm build-riscv build-esp32 && \
-    cd build-riscv && \
-    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
-    ninja && ninja install && \
-    cd ../build-esp32 && \
-    sh ../do-esp32-configure && \
-    ninja && ninja install && \
-    cd ../build-arm && \
-    sh ../do-arm-configure && \
-    ninja && ninja install
-
-# No need to keep the sources around
-RUN rm -rf /usr/src/picolibc
 
 # RIOT toolchains
 ARG RIOT_TOOLCHAIN_GCC_VERSION=10.1.0
