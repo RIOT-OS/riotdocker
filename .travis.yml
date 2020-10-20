@@ -18,3 +18,5 @@ script:
     BUILD_IN_DOCKER=1
     BOARDS="native samr21-xpro"
     make -CRIOT/examples/hello-world buildtest
+  # run static tests
+  - docker run --rm -ti -v $(pwd)/RIOT:/data/riotbuild -e CI_BASE_BRANCH=2020.04-branch riotdocker:latest ./dist/tools/ci/static_tests.sh
