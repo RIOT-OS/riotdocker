@@ -1,14 +1,17 @@
 language: generic
-sudo: required
 dist: bionic
+os: linux
 
 services:
   - docker
 
+env:
+  - RIOT_BRANCH=2020.10-branch
+
 script:
   - docker build --pull -t riotdocker .
   - docker image ls riotdocker:latest
-  - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b 2020.04-branch
+  - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b ${RIOT_BRANCH}
   - DOCKER_IMAGE=riotdocker:latest
     BUILD_IN_DOCKER=1
     BOARDS="arduino-uno esp32-wroom-32 hifive1 msb-430h native pic32-wifire samr21-xpro"
@@ -19,4 +22,4 @@ script:
     BOARDS="native samr21-xpro"
     make -CRIOT/examples/hello-world buildtest
   # run static tests
-  - docker run --rm -ti -v $(pwd)/RIOT:/data/riotbuild -e CI_BASE_BRANCH=2020.04-branch riotdocker:latest ./dist/tools/ci/static_tests.sh
+  - docker run --rm -ti -v $(pwd)/RIOT:/data/riotbuild -e CI_BASE_BRANCH=${RIOT_BRANCH} riotdocker:latest ./dist/tools/ci/static_tests.sh
