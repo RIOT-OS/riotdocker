@@ -232,7 +232,7 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
 ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
-ARG PICOLIBC_TAG=1.4.6
+ARG PICOLIBC_TAG=1.4.7
 ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
 ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
 
@@ -254,10 +254,10 @@ RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
     meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
     ninja && ninja install && \
     cd ../build-esp32 && \
-    sh ../do-esp32-configure && \
+    sh ../scripts/do-esp32-configure && \
     ninja && ninja install && \
     cd ../build-arm && \
-    sh ../do-arm-configure && \
+    sh ../scripts/do-arm-configure && \
     ninja && ninja install
 
 # No need to keep the sources around
