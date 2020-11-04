@@ -11,7 +11,7 @@ cbor2>=5.0.0
 colorama>=0.4.0
 cryptography==2.6.1
 scapy>=2.4.3
-codespell==1.16.0
+codespell>=1.17.1
 protobuf==3.10.0
 scikit-learn==0.22.1
 joblib==0.14.0
