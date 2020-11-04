@@ -1,7 +1,7 @@
 # Required python libraries
 pyasn1==0.4.2
 ecdsa==0.13.3
-flake8==3.5.0
+flake8==3.8.4
 pexpect==4.2.1
 pycrypto==2.6.1
 pyserial==3.4
