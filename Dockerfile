@@ -85,6 +85,7 @@ RUN \
         rsync \
         ssh-client \
         subversion \
+        uncrustify \
         unzip \
         vera++ \
         vim-common \
