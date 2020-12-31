@@ -71,7 +71,6 @@ RUN \
         libpcre3 \
         libtool \
         m4 \
-        ninja-build \
         parallel \
         pcregrep \
         protobuf-compiler \
@@ -174,6 +173,18 @@ RUN mkdir -p /opt && \
 
 ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/${RISCV_VERSION}-${RISCV_BUILD}/bin
 
+# Install picolibc Debian package
+ARG PICOLIBC_VERSION=1.4.6-1
+RUN wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
 RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
@@ -229,38 +240,6 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
     git checkout -q 414d1f3a577702e927973bd906357ee00d7a6c6c
 
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
-
-ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
-ARG PICOLIBC_TAG=1.4.6
-ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
-ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
-
-RUN echo 'Building and Installing PicoLIBC' >&2 && \
-    pip3 install --no-cache-dir meson && \
-    mkdir -p /usr/src/picolibc && \
-    cd /usr/src/picolibc/ &&\
-    curl -L -o ${PICOLIBC_ARCHIVE} ${PICOLIBC_URL} && \
-    tar -xf ${PICOLIBC_ARCHIVE} && \
-    cd picolibc-${PICOLIBC_TAG}
-
-COPY cross-riscv-none-embed.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
-
-RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
-    which riscv-none-embed-gcc && \
-    ls -al /opt/gnu-mcu-eclipse/riscv-none-gcc/*/bin && \
-    mkdir build-arm build-riscv build-esp32 && \
-    cd build-riscv && \
-    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
-    ninja && ninja install && \
-    cd ../build-esp32 && \
-    sh ../do-esp32-configure && \
-    ninja && ninja install && \
-    cd ../build-arm && \
-    sh ../do-arm-configure && \
-    ninja && ninja install
-
-# No need to keep the sources around
-RUN rm -rf /usr/src/picolibc
 
 # RIOT toolchains
 ARG RIOT_TOOLCHAIN_GCC_VERSION=10.1.0
