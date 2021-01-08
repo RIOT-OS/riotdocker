@@ -232,7 +232,7 @@ RUN echo 'Installing ESP32 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
 
 ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
-ARG PICOLIBC_TAG=1.4.7
+ARG PICOLIBC_TAG=1.5.1
 ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
 ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
 
