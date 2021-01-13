@@ -9,7 +9,7 @@ env:
   - RIOT_BRANCH=2020.10-branch
 
 script:
-  - docker build --pull -t riotdocker .
+  - docker build --pull -t riotdocker riotbuild 
   - docker image ls riotdocker:latest
   - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b ${RIOT_BRANCH}
   - DOCKER_IMAGE=riotdocker:latest
