@@ -83,6 +83,7 @@ RUN \
         python3-wheel \
         p7zip \
         rsync \
+        shellcheck \
         ssh-client \
         subversion \
         uncrustify \
