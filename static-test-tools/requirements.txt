@@ -1,0 +1,3 @@
+# Required python libraries for static tests
+flake8==3.8.4
+codespell>=1.17.1

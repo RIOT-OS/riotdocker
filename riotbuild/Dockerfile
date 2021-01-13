@@ -13,21 +13,18 @@
 #      # docker pull riot/riotbuild
 # 
 # Use own build image:
-# 1. Build own image based on latest base OS image:
+# 1. Build own image based on latest base OS image (from the riotbuild directory):
 #      # docker build --pull -t riotbuild .
 #
 # Usage:
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM ubuntu:bionic
+FROM riot/static-test-tools:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
 ENV DEBIAN_FRONTEND noninteractive
-
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
 
 # The following package groups will be installed:
 # - update the package index files to latest available version
@@ -57,40 +54,26 @@ RUN \
         ca-certificates \
         ccache \
         cmake \
-        coccinelle \
         curl \
-        cppcheck \
-        doxygen \
         gcc-multilib \
         gdb \
         g++-multilib \
-        git \
-        graphviz \
-        less \
         libffi-dev \
         libpcre3 \
         libtool \
         m4 \
         ninja-build \
         parallel \
-        pcregrep \
         protobuf-compiler \
         python \
-        python3 \
-        python3-dev \
-        python3-pip \
         python3-setuptools \
         python3-wheel \
         p7zip \
         rsync \
-        shellcheck \
         ssh-client \
         subversion \
-        uncrustify \
         unzip \
-        vera++ \
         vim-common \
-        wget \
         xsltproc \
     && echo 'Installing MSP430 toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
@@ -174,13 +157,6 @@ RUN mkdir -p /opt && \
     cd -
 
 ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/${RISCV_VERSION}-${RISCV_BUILD}/bin
-
-# compile suid create_user binary
-COPY create_user.c /tmp/create_user.c
-RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
-    && chown root:root /usr/local/bin/create_user \
-    && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
-    && rm /tmp/create_user.c
 
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
@@ -283,20 +259,6 @@ RUN echo 'Installing python3 packages' >&2 \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm /tmp/requirements.txt
 
-# Create working directory for mounting the RIOT sources
-RUN mkdir -m 777 -p /data/riotbuild
-
-# Set a global system-wide git user and email address
-RUN git config --system user.name "riot" && \
-    git config --system user.email "riot@example.com"
-
-# Copy our entry point script (signal wrapper)
-COPY run.sh /run.sh
-ENTRYPOINT ["/bin/bash", "/run.sh"]
-
-# By default, run a shell when no command is specified on the docker command line
-CMD ["/bin/bash"]
-
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
 ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
@@ -311,5 +273,3 @@ ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
-
-WORKDIR /data/riotbuild
