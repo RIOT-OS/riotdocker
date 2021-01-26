@@ -14,7 +14,7 @@ script:
   - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b ${RIOT_BRANCH}
   - DOCKER_IMAGE=riotdocker:latest
     BUILD_IN_DOCKER=1
-    BOARDS="arduino-uno esp32-wroom-32 hifive1 msb-430h native pic32-wifire samr21-xpro"
+    BOARDS="arduino-uno esp32-wroom-32 hifive1 msb-430h native pic32-wifire samr21-xpro nucleo-l011k4"
     make -CRIOT/examples/hello-world buildtest
   - DOCKER_IMAGE=riotdocker:latest
     TOOLCHAIN=llvm
