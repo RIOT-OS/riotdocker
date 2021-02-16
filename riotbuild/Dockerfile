@@ -142,21 +142,20 @@ ENV MIPS_ELF_ROOT /opt/mips-mti-elf/${MIPS_VERSION}
 ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
-ARG RISCV_VERSION=8.2.0-2.2-20190521
-ARG RISCV_BUILD=0004
+ARG RISCV_VERSION=10.1.0-1.1
 RUN mkdir -p /opt && \
-        wget -q https://github.com/gnu-mcu-eclipse/riscv-none-gcc/releases/download/v${RISCV_VERSION}/gnu-mcu-eclipse-riscv-none-gcc-${RISCV_VERSION}-${RISCV_BUILD}-centos64.tgz -O- \
+        wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-embed-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
         | tar -C /opt -xz && \
     echo 'Removing documentation' >&2 && \
-      rm -rf /opt/gnu-mcu-eclipse/riscv-none-gcc/*/share/doc && \
+      rm -rf /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/share/doc && \
     echo 'Deduplicating binaries' >&2 && \
-    cd /opt/gnu-mcu-eclipse/riscv-none-gcc/*/riscv-none-embed/bin && \
+    cd /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/riscv-none-embed/bin && \
       for f in *; do test -f "../../bin/riscv-none-embed-$f" && \
        ln -f "../../bin/riscv-none-embed-$f" "$f"; \
       done && \
     cd -
 
-ENV PATH $PATH:/opt/gnu-mcu-eclipse/riscv-none-gcc/${RISCV_VERSION}-${RISCV_BUILD}/bin
+ENV PATH $PATH:/opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin
 
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
@@ -224,7 +223,7 @@ COPY cross-riscv-none-embed.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
 
 RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
     which riscv-none-embed-gcc && \
-    ls -al /opt/gnu-mcu-eclipse/riscv-none-gcc/*/bin && \
+    ls -al /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin && \
     mkdir build-arm build-riscv build-esp32 && \
     cd build-riscv && \
     meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
