@@ -1,1 +1,1 @@
-status = ["continuous-integration/travis-ci/push"]
+status = ["continuous-integration/travis-ci/push", "ci/dockercloud-stage (/riotbuild)", "ci/dockercloud-stage (/riotdocker-base)", "ci/dockercloud-stage (/static-test-tools)"]
