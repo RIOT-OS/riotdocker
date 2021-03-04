@@ -1,5 +1,5 @@
-ARG DOCKERHUB_REGISTRY="riot"
-FROM ${DOCKERHUB_REGISTRY}/riotdocker-base
+ARG DOCKER_REGISTRY="riot"
+FROM ${DOCKER_REGISTRY}/riotdocker-base
 
 LABEL maintainer="francois-xavier.molina@inria.fr"
 

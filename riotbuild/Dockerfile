@@ -20,7 +20,8 @@
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 ARG DOCKER_REGISTRY="riot"
-FROM ${DOCKER_REGISTRY}/static-test-tools:latest
+FROM ${DOCKER_REGISTRY}/gcc-arm-none-eabi as gcc-arm-none-eabi
+FROM ${DOCKER_REGISTRY}/riotbuild-essentials:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
@@ -107,21 +108,10 @@ RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install ARM GNU embedded toolchain
-# For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-ARG ARM_URLBASE=https://developer.arm.com/-/media/Files/downloads/gnu-rm
-ARG ARM_URL=${ARM_URLBASE}/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2
-ARG ARM_MD5=fe0029de4f4ec43cf7008944e34ff8cc
-ARG ARM_FOLDER=gcc-arm-none-eabi-9-2019-q4-major
-RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
-    mkdir -p /opt && \
-    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 ${ARM_URL} && \
-    echo "${ARM_MD5} /opt/gcc-arm-none-eabi.tar.bz2" | md5sum -c && \
-    tar -C /opt -jxf /opt/gcc-arm-none-eabi.tar.bz2 && \
-    rm -f /opt/gcc-arm-none-eabi.tar.bz2 && \
-    echo 'Removing documentation' >&2 && \
-    rm -rf /opt/gcc-arm-none-eabi-*/share/doc
-    # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
-
+ARG ARM_FOLDER=gcc-arm-none-eabi
+RUN mkdir -p /opt/${ARM_FOLDER}
+COPY --from=gcc-arm-none-eabi /opt/${ARM_FOLDER} /opt/${ARM_FOLDER}
+# Add to PATH
 ENV PATH ${PATH}:/opt/${ARM_FOLDER}/bin
 
 # Install MIPS binary toolchain

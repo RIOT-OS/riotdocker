@@ -1,4 +1,4 @@
-ARG DOCKERHUB_REGISTRY="riot"
+ARG DOCKER_REGISTRY="riot"
 FROM ubuntu:bionic AS builder
 
 ARG EDBG_INSTALL_DEPS="git ca-certificates build-essential libudev-dev"
@@ -21,8 +21,8 @@ RUN mkdir -p opt \
     && make -j"$(nproc)" \
     && make all
 
-ARG DOCKERHUB_REGISTRY
-FROM ${DOCKERHUB_REGISTRY}/riotdocker-base
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/riotdocker-base
 
 LABEL maintainer="francois-xavier.molina@inria.fr"
 

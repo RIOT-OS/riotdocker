@@ -1,5 +1,5 @@
-ARG DOCKERHUB_REGISTRY="riot"
-FROM ${DOCKERHUB_REGISTRY}/static-test-tools
+ARG DOCKER_REGISTRY="riot"
+FROM ${DOCKER_REGISTRY}/static-test-tools
 
 LABEL maintainer="francois-xavier.molina@inria.fr"
 

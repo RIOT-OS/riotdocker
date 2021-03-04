@@ -1,6 +1,6 @@
-ARG DOCKERHUB_REGISTRY="riot"
-FROM ${DOCKERHUB_REGISTRY}/gcc-arm-none-eabi.lite as gcc-arm-none-eabi
-FROM ${DOCKERHUB_REGISTRY}/riotbuild-essentials
+ARG DOCKER_REGISTRY="riot"
+FROM ${DOCKER_REGISTRY}/gcc-arm-none-eabi.lite as gcc-arm-none-eabi
+FROM ${DOCKER_REGISTRY}/riotbuild-essentials
 
 LABEL maintainer="francois-xavier.molina@inria.fr"
 
