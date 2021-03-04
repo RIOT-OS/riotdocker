@@ -1,0 +1,381 @@
+---
+name: multiarch-poc
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  build-riotdocker-base:
+    name: Build and push images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache riotdocker-base layer
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-base
+          key: ${{ runner.os }}-buildx-base-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-base-
+
+      - name: Build and push riotdocker-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotdocker-base
+          file: ./riotdocker-base/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/riotdocker-base:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-base
+          cache-to: type=local,dest=/tmp/.buildx-cache-base-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-base
+          mv /tmp/.buildx-cache-base-new /tmp/.buildx-cache-base
+
+  build-static-test-tools:
+    needs: build-riotdocker-base
+    name: Build and push static-test-tools
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache static-test-tools
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-static
+          key: ${{ runner.os }}-buildx-static-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-static-
+
+      - name: Build and push static-test-tools
+        uses: docker/build-push-action@v2
+        with:
+          context: ./static-test-tools
+          file: ./static-test-tools/Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/static-test-tools:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-static
+          cache-to: type=local,dest=/tmp/.buildx-cache-static-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-static
+          mv /tmp/.buildx-cache-static-new /tmp/.buildx-cache-static
+
+  build-riotbuild-essentials:
+    needs: build-static-test-tools
+    name: Build and push riotbuild-essentials
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache riotbuild-essentials
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-riotbuild-essentials
+          key: ${{ runner.os }}-buildx-riotbuild-essentials-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-riotbuild-essentials-
+
+      - name: Build and push riotbuild-essentials
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotbuild-essentials
+          file: ./riotbuild-essentials/Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/riotbuild-essentials:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-riotbuild-essentials
+          cache-to: type=local,dest=/tmp/.buildx-cache-riotbuild-essentials-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-riotbuild-essentials
+          mv /tmp/.buildx-cache-riotbuild-essentials-new /tmp/.buildx-cache-riotbuild-essentials
+
+  build-toolchains-base:
+    needs: build-riotdocker-base
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [gcc-arm-none-eabi.lite]
+    name: Build and push ${{ matrix.toolchain }}
+    env:
+      ARM_VERSION: gcc-arm-none-eabi-9-2019-q4-major
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache ${{ matrix.toolchain }}
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-${{ matrix.toolchain }}
+          key: ${{ runner.os }}-buildx-${{ matrix.toolchain }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.toolchain }}-
+
+      - name: Build and push ${{ matrix.toolchain }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./toolchains/${{ matrix.toolchain }}.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: |
+            ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.toolchain }}:latest
+            ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.toolchain }}:${{ env.ARM_VERSION }}
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+            ARM_VERSION=${{ env.ARM_VERSION }}
+          cache-from: type=local,src=/tmp/.buildx-cache-${{ matrix.toolchain }}
+          cache-to: type=local,dest=/tmp/.buildx-cache-${{ matrix.toolchain }}-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-${{ matrix.toolchain }}
+          mv /tmp/.buildx-cache-${{ matrix.toolchain }}-new /tmp/.buildx-cache-${{ matrix.toolchain }}
+
+
+  build-toolchains:
+    needs:
+      - build-riotbuild-essentials
+      - build-toolchains-base
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [gcc-arm-none-eabi]
+    name: Build and push ${{ matrix.toolchain }}
+    env:
+      ARM_VERSION: gcc-arm-none-eabi-9-2019-q4-major
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache ${{ matrix.toolchain }}
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-${{ matrix.toolchain }}
+          key: ${{ runner.os }}-buildx-${{ matrix.toolchain }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.toolchain }}-
+
+      - name: Build and push ${{ matrix.toolchain }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./toolchains/${{ matrix.toolchain }}.Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: |
+            ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.toolchain }}:latest
+            ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.toolchain }}:${{ env.ARM_VERSION }}
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+            ARM_VERSION=${{ env.ARM_VERSION }}
+          cache-from: type=local,src=/tmp/.buildx-cache-${{ matrix.toolchain }}
+          cache-to: type=local,dest=/tmp/.buildx-cache-${{ matrix.toolchain }}-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-${{ matrix.toolchain }}
+          mv /tmp/.buildx-cache-${{ matrix.toolchain }}-new /tmp/.buildx-cache-${{ matrix.toolchain }}
+
+  build-riotbuild:
+    needs:
+      - build-static-test-tools
+      - build-toolchains
+    name: Build and push riotbuild
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache riotbuild
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-riotbuild
+          key: ${{ runner.os }}-buildx-riotbuild-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-riotbuild-
+
+      - name: Build and push riotbuild
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotbuild
+          file: ./riotbuild/Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/riotbuild:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-riotbuild
+          cache-to: type=local,dest=/tmp/.buildx-cache-riotbuild-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-riotbuild
+          mv /tmp/.buildx-cache-riotbuild-new /tmp/.buildx-cache-riotbuild
+
+  build-flashers:
+    needs: build-riotdocker-base
+    strategy:
+      fail-fast: false
+      matrix:
+        flasher: [jlink, edbg, openocd]
+    name: Build and push ${{ matrix.flasher }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache ${{ matrix.flasher }}
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-${{ matrix.flasher }}
+          key: ${{ runner.os }}-buildx-${{ matrix.flasher }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.flasher }}-
+
+      - name: Build and push ${{ matrix.flasher }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./flashers/${{ matrix.flasher }}.Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.flasher }}:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-${{ matrix.flasher }}
+          cache-to: type=local,dest=/tmp/.buildx-cache-${{ matrix.flasher }}-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-${{ matrix.flasher }}
+          mv /tmp/.buildx-cache-${{ matrix.flasher }}-new /tmp/.buildx-cache-${{ matrix.flasher }}
