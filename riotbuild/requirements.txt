@@ -1,19 +1,7 @@
 # Required python libraries
-pyasn1==0.4.2
-ecdsa==0.13.3
-pexpect==4.8.0
+pexpect==4.2.1
 pycrypto==2.6.1
 pyserial==3.4
-ed25519==1.4
-cbor==1.0.0
-cbor2>=5.0.0
-colorama>=0.4.0
-cryptography==3.2
 scapy>=2.4.3
-protobuf==3.10.0
-scikit-learn==0.22.1
-joblib==0.14.0
-emlearn==0.10.1
-jinja2==2.11.2
-riotctrl[rapidjson]>=0.4.0
+riotctrl>=0.1.1
 pyhsslms>=1.0.0

@@ -1,0 +1,18 @@
+# Required python libraries
+## For SUIT
+cbor==1.0.0
+cbor2>=5.0.0
+colorama>=0.4.0
+cryptography==2.6.1
+ed25519==1.4
+pyhsslms>=1.0.0
+## For emlearn
+protobuf==3.10.0
+scikit-learn==0.22.1
+emlearn==0.10.1
+joblib==0.14.0
+## Multiple packages
+pyasn1==0.4.2
+ecdsa==0.13.3
+## For kconfig
+jinja2
