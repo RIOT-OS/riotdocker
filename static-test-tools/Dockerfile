@@ -21,7 +21,6 @@ RUN \
         make \
         pcregrep \
         shellcheck \
-        uncrustify \
         vera++ \
         wget \
         && \
@@ -33,3 +32,10 @@ COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 && \
     pip3 install --no-cache-dir -r /tmp/requirements.txt && \
     rm -f /tmp/requirements.txt
+
+ARG UNCRUSTIFY_URL=https://github.com/kaspar030/uncrustify-builder/releases/download/0.72.0/uncrustify-0.72.0.gz
+ARG UNCRUSTIFY_BIN=/usr/local/bin/uncrustify
+RUN echo 'Installing uncrustify binary' >&2 && \
+    wget $UNCRUSTIFY_URL -O ${UNCRUSTIFY_BIN}.gz && \
+    gunzip ${UNCRUSTIFY_BIN}.gz && \
+    chmod 0755 ${UNCRUSTIFY_BIN}
