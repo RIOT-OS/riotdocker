@@ -91,7 +91,17 @@ RUN \
         clang-tools-${LLVM_VERSION}/bionic-updates \
         llvm \
         clang \
-        clang-tools && \
+        clang-tools \
+    && echo 'Installing C2Rust dependencies' >&2 && \
+    apt-get -y --no-install-recommends install \
+        libclang-dev \
+        libclang-10-dev \
+        llvm \
+        llvm-dev \
+        llvm-10-dev \
+        cmake \
+        libssl-dev \
+        pkg-config && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
         SYMTARGET=$(readlink -f ${file}) && \
@@ -257,6 +267,20 @@ COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm /tmp/requirements.txt
+
+# install nightly Rust via rustup (for Rust-on-RIOT builds) and the very
+# nightly C2Rust needs, as well as C2Rust itself (which in term is needed for
+# Rust-on-RIOT builds).
+RUN \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    . ~/.cargo/env && \
+    rustup install nightly && \
+    rustup target add thumbv7m-none-eabi --toolchain nightly && \
+    rustup target add i686-unknown-linux-gnu --toolchain nightly && \
+    rustup install nightly-2019-12-05 && \
+    rustup component add --toolchain nightly-2019-12-05 rustfmt rustc-dev && \
+    git clone https://github.com/chrysn-pull-requests/c2rust -b for-riot && \
+    (cd c2rust && cargo +nightly-2019-12-05 install --path c2rust --locked)
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
