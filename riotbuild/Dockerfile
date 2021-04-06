@@ -20,8 +20,7 @@
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-# the latest run of ./c2rust-built/
-FROM 6edeaeb79f6f as c2rust
+FROM riot/c2rust-built as c2rust
 
 FROM riot/static-test-tools:latest
 
@@ -94,17 +93,7 @@ RUN \
         clang-tools-${LLVM_VERSION}/bionic-updates \
         llvm \
         clang \
-        clang-tools \
-    && echo 'Installing C2Rust dependencies' >&2 && \
-    apt-get -y --no-install-recommends install \
-        libclang-dev \
-        libclang-10-dev \
-        llvm \
-        llvm-dev \
-        llvm-10-dev \
-        cmake \
-        libssl-dev \
-        pkg-config && \
+        clang-tools && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
         SYMTARGET=$(readlink -f ${file}) && \
@@ -271,19 +260,21 @@ RUN echo 'Installing python3 packages' >&2 \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm /tmp/requirements.txt
 
-# install nightly Rust via rustup (for Rust-on-RIOT builds) and the very
-# nightly C2Rust needs, as well as C2Rust itself (which in term is needed for
-# Rust-on-RIOT builds).
+# While sourcing ~/.cargo/env later would have the right short-term effect,
+# we'd still need to set the root-based path even later when HOME is
+# /data/riotbuild -- so setting it right away.
+ENV PATH ${PATH}:/root/.cargo/bin
+# Install nightly Rust via rustup; this is needed for Rust-on-RIOT builds and
+# contains all CARGO_TARGETs currently recognized for RIOT targets.
 RUN \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    . ~/.cargo/env && \
     rustup install nightly && \
-    rustup target add thumbv7m-none-eabi --toolchain nightly && \
     rustup target add i686-unknown-linux-gnu --toolchain nightly && \
-    rustup install nightly-2019-12-05 && \
-    rustup component add --toolchain nightly-2019-12-05 rustfmt rustc-dev && \
-    git clone https://github.com/chrysn-pull-requests/c2rust -b for-riot && \
-    (cd c2rust && cargo +nightly-2019-12-05 install --path c2rust --locked)
+    rustup target add riscv32imac-unknown-none-elf -none-eabi --toolchain nightly && \
+    rustup target add thumbv7em-none-eabihf -none-eabi --toolchain nightly && \
+    rustup target add thumbv7em-none-eabi -none-eabi --toolchain nightly && \
+    rustup target add thumbv7m-none-eabi -none-eabi --toolchain nightly && \
+    rustup target add thumbv6m-none-eabi -none-eabi --toolchain nightly
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
