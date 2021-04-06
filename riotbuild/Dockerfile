@@ -20,6 +20,9 @@
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
+# the latest run of ./c2rust-built/
+FROM 6edeaeb79f6f as c2rust
+
 FROM riot/static-test-tools:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
@@ -296,3 +299,5 @@ ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
+
+COPY --from=c2rust /usr/bin/c2rust /usr/bin

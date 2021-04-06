@@ -21,6 +21,7 @@ env:
 script:
   - docker build -t riot/riotdocker-base riotdocker-base
   - docker build -t riot/static-test-tools static-test-tools
+  - docker build -t riot/c2rust-built c2rust-built
   # Travis timeout increased because the single step of building `cargo` in installing c2rust can take more than 10' on its own.
   - travis_wait 50 docker build --pull -t riotdocker riotbuild
   - docker image ls riotdocker:latest
