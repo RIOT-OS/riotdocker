@@ -93,7 +93,11 @@ RUN \
         clang-tools-${LLVM_VERSION}/bionic-updates \
         llvm \
         clang \
-        clang-tools && \
+        clang-tools \
+    && echo 'Installing LLVM version needed by the C2Rust binaries' >&2 && \
+    apt-get -y --no-install-recommends install \
+        llvm-7-dev \
+        && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
         SYMTARGET=$(readlink -f ${file}) && \
@@ -295,4 +299,5 @@ RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
 
+# These depend on llvm-7-dev to be installed
 COPY --from=c2rust /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin/
