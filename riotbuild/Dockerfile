@@ -295,4 +295,4 @@ RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
 
-COPY --from=c2rust /usr/bin/c2rust /usr/bin
+COPY --from=c2rust /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin
