@@ -270,11 +270,11 @@ RUN \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup install nightly && \
     rustup target add i686-unknown-linux-gnu --toolchain nightly && \
-    rustup target add riscv32imac-unknown-none-elf -none-eabi --toolchain nightly && \
-    rustup target add thumbv7em-none-eabihf -none-eabi --toolchain nightly && \
-    rustup target add thumbv7em-none-eabi -none-eabi --toolchain nightly && \
-    rustup target add thumbv7m-none-eabi -none-eabi --toolchain nightly && \
-    rustup target add thumbv6m-none-eabi -none-eabi --toolchain nightly
+    rustup target add riscv32imac-unknown-none-elf --toolchain nightly && \
+    rustup target add thumbv7em-none-eabihf --toolchain nightly && \
+    rustup target add thumbv7em-none-eabi --toolchain nightly && \
+    rustup target add thumbv7m-none-eabi --toolchain nightly && \
+    rustup target add thumbv6m-none-eabi --toolchain nightly
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
