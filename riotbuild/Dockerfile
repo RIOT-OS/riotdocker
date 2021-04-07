@@ -264,6 +264,10 @@ RUN echo 'Installing python3 packages' >&2 \
 # we'd still need to set the root-based path even later when HOME is
 # /data/riotbuild -- so setting it right away.
 ENV PATH ${PATH}:/root/.cargo/bin
+# These are the default values now, but will be needed later when HOME Is
+# changed.
+ENV RUSTUP_HOME /root/.rustup
+ENV CARGO_HOME /root/.cargo
 # Install nightly Rust via rustup; this is needed for Rust-on-RIOT builds and
 # contains all CARGO_TARGETs currently recognized for RIOT targets.
 RUN \
