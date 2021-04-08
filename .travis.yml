@@ -24,7 +24,7 @@ script:
   # The "Compiling cargo v0.44.1" step takes more than 10 minutes on its own
   # and can't be made more verbose; giving this one a timeout on its own.
   - travis_wait 45 docker build -t riot/c2rust-built c2rust-built
-  - docker build --pull -t riotdocker riotbuild
+  - docker build -t riotdocker riotbuild
   - docker image ls riotdocker:latest
   - git clone --depth 1 https://github.com/RIOT-OS/RIOT -b ${RIOT_BRANCH}
   - DOCKER_IMAGE=riotdocker:latest
