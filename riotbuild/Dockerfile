@@ -20,7 +20,7 @@
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
 
-FROM riot/c2rust-built as c2rust
+FROM chrysn/c2rust-built as c2rust
 
 FROM riot/static-test-tools:latest
 
