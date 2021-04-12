@@ -11,7 +11,7 @@ jobs:
     name: Build and push images
     runs-on: ubuntu-latest
     env:
-      RIOT_BRANCH: 2020.10-branch
+      RIOT_BRANCH: '2021.01'
 
     steps:
       - name: checkout
@@ -40,7 +40,9 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/riotdocker-base:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/riotdocker-base:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/riotdocker-base:${{ env.RIOT_BRANCH }}
           cache-from: type=local,src=/tmp/.buildx-cache-base
           cache-to: type=local,dest=/tmp/.buildx-cache-base-new
 
@@ -66,7 +68,9 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/static-test-tools:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/static-test-tools:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/static-test-tools:${{ env.RIOT_BRANCH }}
           build-args: |
             DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
           cache-from: type=local,src=/tmp/.buildx-cache-static
@@ -94,7 +98,9 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:${{ env.RIOT_BRANCH }}
           build-args: |
             DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
           cache-from: type=local,src=/tmp/.buildx-cache-riotbuild

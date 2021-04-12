@@ -10,7 +10,7 @@ jobs:
     name: Build and test pull request
     runs-on: ubuntu-latest
     env:
-      RIOT_BRANCH: 2020.10-branch
+      RIOT_BRANCH: '2020.10'
 
     steps:
       - name: checkout
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: RIOT-OS/RIOT
-          ref: ${{ env.RIOT_BRANCH }}
+          ref: ${{ env.RIOT_BRANCH }}-branch
           path: RIOT
 
       - name: Run gnu build test
@@ -125,5 +125,5 @@ jobs:
       - name: Run static tests
         run: |
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
-          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }} ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest \
+          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }}-branch ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest \
           ./dist/tools/ci/static_tests.sh
