@@ -91,6 +91,12 @@ jobs:
           key: ${{ runner.os }}-buildx-riotbuild-${{ github.sha }}
           restore-keys: ${{ runner.os }}-buildx-riotbuild-
 
+      - name: set environment variables
+        run: |
+          echo "RIOTBUILD_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          echo "RIOTBUILD_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "RIOTBUILD_VERSION=$(git describe --always)" >> $GITHUB_ENV
+
       - name: Build and push riotbuild
         uses: docker/build-push-action@v2
         with:
@@ -103,6 +109,9 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:${{ env.RIOT_BRANCH }}
           build-args: |
             DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
+            RIOTBUILD_BRANCH=${{ env.RIOTBUILD_BRANCH }}
+            RIOTBUILD_COMMIT=${{ env.RIOTBUILD_COMMIT }}
+            RIOTBUILD_VERSION=${{ env.RIOTBUILD_VERSION }}
           cache-from: type=local,src=/tmp/.buildx-cache-riotbuild
           cache-to: type=local,dest=/tmp/.buildx-cache-riotbuild-new
 
