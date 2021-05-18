@@ -10,7 +10,7 @@ on:
     branches:
       - '*'
 jobs:
-  build-riotdocker-base:
+  build-test:
     name: Build and test pull request
     runs-on: ubuntu-latest
     env:
@@ -61,9 +61,10 @@ jobs:
           context: ./static-test-tools
           platforms: linux/amd64
           load: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/static-test-tools:latest
+          pull: false
+          tags: test/static-test-tools:latest
           build-args: |
-            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_REGISTRY=test
           cache-from: type=local,src=/tmp/.buildx-cache-static
           cache-to: type=local,dest=/tmp/.buildx-cache-static-new
 
@@ -88,9 +89,10 @@ jobs:
           context: ./riotbuild
           platforms: linux/amd64
           load: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+          pull: false
+          tags: test/riotbuild:latest
           build-args: |
-            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_REGISTRY=test
           cache-from: type=local,src=/tmp/.buildx-cache-riotbuild
           cache-to: type=local,dest=/tmp/.buildx-cache-riotbuild-new
 
@@ -114,7 +116,7 @@ jobs:
           make -CRIOT/examples/hello-world buildtest
         env:
           BUILD_IN_DOCKER: 1
-          DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+          DOCKER_IMAGE: test/riotbuild:latest
           BOARDS: "arduino-uno esp32-wroom-32 hifive1 msb-430h native pic32-wifire samr21-xpro"
 
       - name: Run llvm build test
@@ -123,11 +125,11 @@ jobs:
         env:
           TOOLCHAIN: llvm
           BUILD_IN_DOCKER: 1
-          DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+          DOCKER_IMAGE: test/riotbuild:latest
           BOARDS: "native samr21-xpro"
 
       - name: Run static tests
         run: |
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
-          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }}-branch ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest \
+          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }}-branch test/riotbuild:latest \
           ./dist/tools/ci/static_tests.sh
