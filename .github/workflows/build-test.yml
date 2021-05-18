@@ -2,6 +2,10 @@
 name: build-test-pull-request
 
 on:
+  push:
+    branches:
+      - trying
+      - staging
   pull_request:
     branches:
       - '*'
@@ -51,7 +55,7 @@ jobs:
           key: ${{ runner.os }}-buildx-static-${{ github.sha }}
           restore-keys: ${{ runner.os }}-buildx-static-
 
-      - name: Build and push static-test-tools
+      - name: Build static-test-tools
         uses: docker/build-push-action@v2
         with:
           context: ./static-test-tools
@@ -59,7 +63,7 @@ jobs:
           load: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/static-test-tools:latest
           build-args: |
-            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
           cache-from: type=local,src=/tmp/.buildx-cache-static
           cache-to: type=local,dest=/tmp/.buildx-cache-static-new
 
@@ -78,15 +82,15 @@ jobs:
           key: ${{ runner.os }}-buildx-riotbuild-${{ github.sha }}
           restore-keys: ${{ runner.os }}-buildx-riotbuild-
 
-      - name: Build and push riotbuild
+      - name: Build riotbuild
         uses: docker/build-push-action@v2
         with:
           context: ./riotbuild
           platforms: linux/amd64
           load: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/riotbuild:test
           build-args: |
-            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
           cache-from: type=local,src=/tmp/.buildx-cache-riotbuild
           cache-to: type=local,dest=/tmp/.buildx-cache-riotbuild-new
 
