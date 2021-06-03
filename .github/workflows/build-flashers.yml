@@ -1,0 +1,116 @@
+---
+name: build-flashers
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'flashers/**'
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'flashers/**'
+jobs:
+  build-riotdocker-base:
+    name: Build and push images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache riotdocker-base layer
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-base
+          key: ${{ runner.os }}-buildx-base-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-base-
+
+      - name: Build and push riotdocker-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotdocker-base
+          file: ./riotdocker-base/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/riotdocker-base:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-base
+          cache-to: type=local,dest=/tmp/.buildx-cache-base-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-base
+          mv /tmp/.buildx-cache-base-new /tmp/.buildx-cache-base
+
+  build-flashers:
+    needs: build-riotdocker-base
+    strategy:
+      fail-fast: false
+      matrix:
+        flasher: [jlink, edbg, openocd]
+    name: Build and push ${{ matrix.flasher }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_REGISTRY }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache ${{ matrix.flasher }}
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-${{ matrix.flasher }}
+          key: ${{ runner.os }}-buildx-${{ matrix.flasher }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.flasher }}-
+
+      - name: Build and push ${{ matrix.flasher }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./flashers/${{ matrix.flasher }}.Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ secrets.DOCKERHUB_REGISTRY }}/${{ matrix.flasher }}:latest
+          build-args: |
+            DOCKERHUB_REGISTRY=${{ secrets.DOCKERHUB_REGISTRY }}
+          cache-from: type=local,src=/tmp/.buildx-cache-${{ matrix.flasher }}
+          cache-to: type=local,dest=/tmp/.buildx-cache-${{ matrix.flasher }}-new
+
+      - name: Move cache
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        run: |
+          rm -rf /tmp/.buildx-cache-${{ matrix.flasher }}
+          mv /tmp/.buildx-cache-${{ matrix.flasher }}-new /tmp/.buildx-cache-${{ matrix.flasher }}
