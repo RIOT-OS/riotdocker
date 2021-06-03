@@ -19,6 +19,7 @@ env:
   - RIOT_BRANCH=2021.01-branch
 
 script:
+  - set -e
   - docker build -t riot/riotdocker-base riotdocker-base
   - docker build -t riot/static-test-tools static-test-tools
   - docker build --pull -t riotdocker riotbuild 
