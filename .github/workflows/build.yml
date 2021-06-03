@@ -62,7 +62,7 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/static-test-tools:latest
             ${{ env.DOCKER_REGISTRY }}/static-test-tools:${{ env.RIOT_BRANCH }}
           build-args: |
-            DOCKER_REGISTRY=local
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
 
       - name: Set environment variables
         run: |
@@ -78,7 +78,7 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
             ${{ env.DOCKER_REGISTRY }}/riotbuild:${{ env.RIOT_BRANCH }}
           build-args: |
-            DOCKER_REGISTRY=local
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
             RIOTBUILD_BRANCH=${{ env.RIOTBUILD_BRANCH }}
             RIOTBUILD_COMMIT=${{ env.RIOTBUILD_COMMIT }}
             RIOTBUILD_VERSION=${{ env.RIOTBUILD_VERSION }}
