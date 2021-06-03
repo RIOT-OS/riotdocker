@@ -19,6 +19,10 @@ env:
   - RIOT_BRANCH=2021.01-branch
 
 script:
+  # log in to docker hub for bors builds
+  # (travis doesn't pass the necessary env vars to PR builds)
+  - echo "staging trying master" | grep -qw "$TRAVIS_BRANCH" && echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+
   - docker build -t riot/riotdocker-base riotdocker-base
   - docker build -t riot/static-test-tools static-test-tools
   - docker build --pull -t riotdocker riotbuild 
