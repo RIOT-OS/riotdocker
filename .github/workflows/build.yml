@@ -1,0 +1,131 @@
+---
+# This workflow will run on all pull-request branches and on 'master',
+# 'staging', and 'trying'
+#
+# In all cases it will incrementally build: riotdocker-base, static-test-tools
+# and riotbuild
+#
+# If riotbuild is successfully built then it will run a simple compile test on
+# a subset of BOARDs using gcc and llvm
+#
+# On master if the building and testing succeeds it will push the generated image
+# to ${DOCKER_REGISTRY}
+#
+# * Requirements:
+#   * Add the following secrets:
+#     * DOCKER_REGISTRY: the registry to pull and push images from/to
+#     * DOCKERHUB_USERNAME: the Docker Hub username account that can
+#       publish to ${DOCKER_REGISTRY}
+#     * DOCKERHUB_PASSWORD: the Docker Hub password for ${DOCKERHUB_USERNAME}
+#
+name: build
+
+on:
+  push:
+    branches:
+      - trying
+      - staging
+      - master
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  build-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    env:
+      RIOT_BRANCH: '2021.01'
+      DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          driver: docker
+
+      - name: Build riotdocker-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotdocker-base
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/riotdocker-base:latest
+            ${{ env.DOCKER_REGISTRY }}/riotdocker-base:${{ env.RIOT_BRANCH }}
+
+      - name: Build static-test-tools
+        uses: docker/build-push-action@v2
+        with:
+          context: ./static-test-tools
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/static-test-tools:latest
+            ${{ env.DOCKER_REGISTRY }}/static-test-tools:${{ env.RIOT_BRANCH }}
+          build-args: |
+            DOCKER_REGISTRY=local
+
+      - name: Set environment variables
+        run: |
+          echo "RIOTBUILD_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          echo "RIOTBUILD_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "RIOTBUILD_VERSION=$(git describe --always)" >> $GITHUB_ENV
+
+      - name: Build riotbuild
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotbuild
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+            ${{ env.DOCKER_REGISTRY }}/riotbuild:${{ env.RIOT_BRANCH }}
+          build-args: |
+            DOCKER_REGISTRY=local
+            RIOTBUILD_BRANCH=${{ env.RIOTBUILD_BRANCH }}
+            RIOTBUILD_COMMIT=${{ env.RIOTBUILD_COMMIT }}
+            RIOTBUILD_VERSION=${{ env.RIOTBUILD_VERSION }}
+
+      - name: Checkout RIOT
+        uses: actions/checkout@v2
+        with:
+          repository: RIOT-OS/RIOT
+          ref: ${{ env.RIOT_BRANCH }}-branch
+          path: RIOT
+
+      - name: GNU build test
+        run: |
+          make -CRIOT/examples/hello-world buildtest
+        env:
+          BUILD_IN_DOCKER: 1
+          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native pic32-wifire samr21-xpro"
+
+      - name: LLVM build test
+        run: |
+          make -CRIOT/examples/hello-world buildtest
+        env:
+          TOOLCHAIN: llvm
+          BUILD_IN_DOCKER: 1
+          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          BOARDS: "native samr21-xpro"
+
+      - name: Run static tests
+        run: |
+          docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
+          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }}-branch ${{ env.DOCKER_REGISTRY }}/riotbuild:latest \
+          ./dist/tools/ci/static_tests.sh
+
+      - name: Login to DockerHub
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Images
+        if: "${{ github.ref == 'refs/heads/master' }}"
+        run: |
+          docker image push ${{ env.DOCKER_REGISTRY }}/riotdocker-base:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/riotdocker-base:${{ env.RIOT_BRANCH }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/static-test-tools:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/static-test-tools:${{ env.RIOT_BRANCH }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/riotbuild:${{ env.RIOT_BRANCH }}

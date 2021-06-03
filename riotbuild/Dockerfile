@@ -11,7 +11,7 @@
 # Use prebuilt image:
 # 1. Prebuilt image can be pulled from Docker Hub registry with:
 #      # docker pull riot/riotbuild
-# 
+#
 # Use own build image:
 # 1. Build own image based on latest base OS image (from the riotbuild directory):
 #      # docker build --pull -t riotbuild .
@@ -19,8 +19,8 @@
 # Usage:
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
-
-FROM riot/static-test-tools:latest
+ARG DOCKER_REGISTRY="riot"
+FROM ${DOCKER_REGISTRY}/static-test-tools:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
