@@ -16,7 +16,7 @@
 #     * DOCKER_REGISTRY: the registry to pull and push images from/to
 #     * DOCKERHUB_USERNAME: the Docker Hub username account that can
 #       publish to ${DOCKER_REGISTRY}
-#     * DOCKERHUB_PASSWORD: the Docker Hub password for ${DOCKERHUB_USERNAME}
+#     * DOCKERHUB_TOKEN: the Docker Hub access token for ${DOCKERHUB_USERNAME}
 #
 name: build
 
