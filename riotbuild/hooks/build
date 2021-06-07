@@ -1,7 +1,0 @@
-#!/bin/sh
-
-docker build \
-    --build-arg RIOTBUILD_BRANCH="$(git rev-parse --abbrev-ref HEAD)" \
-    --build-arg RIOTBUILD_COMMIT="$(git rev-parse HEAD)" \
-    --build-arg RIOTBUILD_VERSION="$(git describe --always)" \
-    -f "${DOCKERFILE_PATH}" -t "${IMAGE_NAME}" .
