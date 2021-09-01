@@ -91,7 +91,11 @@ RUN \
         clang-tools-${LLVM_VERSION}/bionic-updates \
         llvm \
         clang \
-        clang-tools && \
+        clang-tools \
+    && echo 'Installing LLVM version needed by the C2Rust binaries' >&2 && \
+    apt-get -y --no-install-recommends install \
+        llvm-7-dev \
+        && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
         SYMTARGET=$(readlink -f ${file}) && \
@@ -258,6 +262,31 @@ RUN echo 'Installing python3 packages' >&2 \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm /tmp/requirements.txt
 
+# While sourcing ~/.cargo/env later would have the right short-term effect,
+# we'd still need to set the right path even later when HOME is
+# /data/riotbuild -- so setting it right away.
+ENV PATH ${PATH}:/opt/rustup/.cargo/bin
+# Install nightly Rust via rustup; this is needed for Rust-on-RIOT builds and
+# contains all CARGO_TARGETs currently recognized for RIOT targets.
+#
+# *_HOMEs moved to /opt to make them world readable. RUSTUP_HOME is set
+# persistently in case someone in their image wants to do a quick `sudo rustup
+# toolchain add` or similar; CARGO_HOME is not because the user will need to
+# write there, and all rustup does here is to place some binaries that later
+# fan out to RUSTUP_HOME anyway.
+ENV RUSTUP_HOME /opt/rustup/.rustup
+RUN \
+    RUSTUP_HOME=/opt/rustup/.rustup \
+    CARGO_HOME=/opt/rustup/.cargo sh -c "\
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2021-08-28 && \
+    rustup target add i686-unknown-linux-gnu && \
+    rustup target add riscv32imac-unknown-none-elf && \
+    rustup target add thumbv7em-none-eabihf && \
+    rustup target add thumbv7em-none-eabi && \
+    rustup target add thumbv7m-none-eabi && \
+    rustup target add thumbv6m-none-eabi && \
+    true"
+
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
 ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
@@ -272,3 +301,6 @@ ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
+
+# These depend on llvm-7-dev to be installed
+COPY --from=chrysn/c2rust-built /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin/
