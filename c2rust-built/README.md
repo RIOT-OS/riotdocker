@@ -9,6 +9,13 @@ but manually built an published as:
 
     docker build . -t chrysn/c2rust-built
 
+The resulting image fulfils three roles:
+
+* c2rust can be executed in there immediately, or used as a base for other images.
+* The binaries in `/usr/bin/c2rust` can be extracted and used in other images.
+* The `./c2rust_0.0_amd64.deb` package can be copied and installed in other images.
+  Unlike copying the binaries over, this also ensures that the right LLVM dependencies are installed there.
+
 [c2rust]: https://github.com/immunant/c2rust
 [does not release binaries]: https://github.com/immunant/c2rust/issues/326
 [branch this is built from (for-riot)]: https://github.com/chrysn-pull-requests/c2rust/tree/for-riot
