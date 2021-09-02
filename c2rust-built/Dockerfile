@@ -65,7 +65,9 @@ RUN \
 #
 # # Cleaning up as the relevant files were copied out, and the rest would just
 # # make for a large image (which should only contain a minimal delta to the base
-# # image in the end)
+# # image in the end: the installed dependencies (libllvm), the installed
+# # binaries and the debs that contain the stripped binaries and separate debug
+# # symbols once more)
 # RUN \
     rm -rf c2rust && \
     rm -rf ~/.cargo && \
