@@ -94,9 +94,9 @@ RUN \
         avr-libc \
     && echo 'Installing LLVM/Clang toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
-        llvm-${LLVM_VERSION}/bionic-updates \
-        clang-${LLVM_VERSION}/bionic-updates \
-        clang-tools-${LLVM_VERSION}/bionic-updates \
+        llvm-${LLVM_VERSION} \
+        clang-${LLVM_VERSION} \
+        clang-tools-${LLVM_VERSION} \
         llvm \
         clang \
         clang-tools \
