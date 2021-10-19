@@ -16,6 +16,9 @@ It needs a user, mainly for holding the ssh configuration and some cache directo
 
 The current default configuration will need about 8gb RAM.
 
+The mentioned "murdock_slave_homedir.tgz" can be obtained from
+kaspar@schleiser.de.
+
 ## Setup
 
 1. create user
