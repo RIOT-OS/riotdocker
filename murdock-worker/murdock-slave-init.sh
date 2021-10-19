@@ -9,7 +9,7 @@ MURDOCK_HOME=$(eval echo ~${MURDOCK_USER})
 MURDOCK_QUEUES=${MURDOCK_QUEUES:-default}
 MURDOCK_WORKERS=${MURDOCK_WORKERS:-4}
 MURDOCK_TMPFS_SIZE=${MURDOCK_TMPFS_SIZE:-$((${MURDOCK_WORKERS}/2))g}
-MURDOCK_CONTAINER=kaspar030/riotdocker:latest
+MURDOCK_CONTAINER=riot/murdock-worker:latest
 
 mount_ccache_tmpfs() {
     local ccache_dir=${MURDOCK_HOME}/.ccache
