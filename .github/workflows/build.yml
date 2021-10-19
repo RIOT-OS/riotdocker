@@ -115,6 +115,16 @@ jobs:
           -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }} ${{ env.DOCKER_REGISTRY }}/riotbuild:latest \
           ./dist/tools/ci/static_tests.sh
 
+      - name: Build murdock worker
+        uses: docker/build-push-action@v2
+        with:
+          context: ./murdock-worker
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/murdock-worker:latest
+            ${{ env.DOCKER_REGISTRY }}/murdock-worker:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
       - name: Login to DockerHub
         if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/login-action@v1
@@ -131,3 +141,5 @@ jobs:
           docker image push ${{ env.DOCKER_REGISTRY }}/static-test-tools:${{ env.VERSION_TAG }}
           docker image push ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           docker image push ${{ env.DOCKER_REGISTRY }}/riotbuild:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/murdock-worker:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/murdock-worker:${{ env.VERSION_TAG }}

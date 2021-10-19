@@ -1,0 +1,18 @@
+[Unit]
+Description=Murdock Worker Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+Environment=MURDOCK_INSTANCE=%n
+Environment=MURDOCK_SYSTEMD=1
+Environment=MURDOCK_CCACHE_TMPFS=1
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull riot/murdock-worker:latest
+ExecStart=/usr/local/bin/murdock-slave-init.sh start
+
+[Install]
+WantedBy=multi-user.target
