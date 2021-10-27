@@ -21,7 +21,6 @@ RUN \
         make \
         pcregrep \
         shellcheck \
-        uncrustify \
         vera++ \
         wget \
         && \
@@ -33,3 +32,6 @@ COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 && \
     pip3 install --no-cache-dir -r /tmp/requirements.txt && \
     rm -f /tmp/requirements.txt
+
+# Install uncrustify
+COPY --from=ghcr.io/kaspar030/uncrustify-builder:latest /usr/bin/uncrustify /usr/bin/uncrustify
