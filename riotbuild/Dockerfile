@@ -26,6 +26,14 @@ LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
+# copy some included packages
+RUN mkdir /pkgs
+COPY files/libsocketcan-dev_0.0.11-1_i386.deb /pkgs/libsocketcan-dev_0.0.11-1_i386.deb
+COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
+
 # The following package groups will be installed:
 # - update the package index files to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
@@ -86,9 +94,9 @@ RUN \
         avr-libc \
     && echo 'Installing LLVM/Clang toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
-        llvm-${LLVM_VERSION}/bionic-updates \
-        clang-${LLVM_VERSION}/bionic-updates \
-        clang-tools-${LLVM_VERSION}/bionic-updates \
+        llvm-${LLVM_VERSION} \
+        clang-${LLVM_VERSION} \
+        clang-tools-${LLVM_VERSION} \
         llvm \
         clang \
         clang-tools \
@@ -103,12 +111,10 @@ RUN \
         # Filter by symlinks starting with /usr/bin/llvm-${LLVM_VERSION}
         case "${SYMTARGET}" in "/usr/lib/llvm-${LLVM_VERSION}"* ) ln -sf ${SYMTARGET} ${SYMNAME}; esac \
     done \
-    && echo 'Installing socketCAN' >&2 && \
-    apt-get -y --no-install-recommends install \
-        libsocketcan-dev:i386 \
-        libsocketcan2:i386 \
+    && echo 'Installing local packages' >&2 && \
+        apt install -y --no-install-recommends /pkgs/*.deb \
     && echo 'Cleaning up installation files' >&2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /pkgs
 
 # Install ARM GNU embedded toolchain
 # For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
