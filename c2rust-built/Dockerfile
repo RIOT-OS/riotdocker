@@ -1,6 +1,5 @@
-#FROM immunant/c2rust:ubuntu-bionic-latest as c2rust
-# Could use ../riotdocker-base after <https://github.com/RIOT-OS/riotdocker/pull/104>.
-FROM ubuntu:focal
+ARG DOCKER_REGISTRY="riot"
+FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 
 COPY debian/control /dpkg-build/debian/
 COPY debian/rules /dpkg-build/debian/
