@@ -302,5 +302,7 @@ RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
 
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/c2rust-built:latest as c2rust-built
 # These depend on llvm-7-dev to be installed
-COPY --from=chrysn/c2rust-built /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin/
+COPY --from=c2rust-built /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin/
