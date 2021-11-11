@@ -280,11 +280,16 @@ ENV PATH ${PATH}:/opt/rustup/.cargo/bin
 # toolchain add` or similar; CARGO_HOME is not because the user will need to
 # write there, and all rustup does here is to place some binaries that later
 # fan out to RUSTUP_HOME anyway.
+#
+# Components: rust-src is needed to run `-Z build-std=core`, which in turn is
+# needed on AVR (which thus doesn't need the avr-unknown-gnu-atmega328 target;
+# being able to build core might be useful for other targets as well).
 ENV RUSTUP_HOME /opt/rustup/.rustup
 RUN \
     RUSTUP_HOME=/opt/rustup/.rustup \
     CARGO_HOME=/opt/rustup/.cargo sh -c "\
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2021-08-28 && \
+    rustup component add rust-src && \
     rustup target add i686-unknown-linux-gnu && \
     rustup target add riscv32imac-unknown-none-elf && \
     rustup target add thumbv7em-none-eabihf && \
