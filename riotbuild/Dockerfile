@@ -34,6 +34,9 @@ RUN mkdir /pkgs
 COPY files/libsocketcan-dev_0.0.11-1_i386.deb /pkgs/libsocketcan-dev_0.0.11-1_i386.deb
 COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 
+# After a transition, the :focal can become implicit :latest
+COPY --from=chrysn/c2rust-built:focal /c2rust_0.0_amd64.deb /pkgs
+
 # The following package groups will be installed:
 # - update the package index files to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
@@ -100,9 +103,6 @@ RUN \
         llvm \
         clang \
         clang-tools \
-    && echo 'Installing LLVM version needed by the C2Rust binaries' >&2 && \
-    apt-get -y --no-install-recommends install \
-        llvm-7-dev \
         && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
@@ -312,6 +312,3 @@ ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
-
-# These depend on llvm-7-dev to be installed
-COPY --from=chrysn/c2rust-built /usr/bin/c2rust /usr/bin/c2rust-refactor /usr/bin/c2rust-transpile /usr/bin/
