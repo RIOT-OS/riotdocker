@@ -22,6 +22,10 @@ RUN \
 # install dwq (disque work queue)
 RUN pip3 install dwq==0.0.41
 
+# install hiredis -- not required directly, but redis (from dwq) will spew
+# warnings otherwise that break things somewhere further down the line.
+RUN pip3 install hiredis
+
 # install testrunner dependencies
 RUN pip3 install click
 
