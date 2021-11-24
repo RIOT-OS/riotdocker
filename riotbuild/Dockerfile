@@ -295,6 +295,9 @@ RUN \
     rustup target add thumbv7em-none-eabi && \
     rustup target add thumbv7m-none-eabi && \
     rustup target add thumbv6m-none-eabi && \
+    rustup target add thumbv8m.main-none-eabihf && \
+    rustup target add thumbv8m.main-none-eabi && \
+    rustup target add thumbv8m.base-none-eabi && \
     true"
 
 # get Dockerfile version from build args
