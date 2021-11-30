@@ -30,7 +30,7 @@ RUN pip3 install hiredis
 RUN pip3 install click
 
 # get git-cache directly from github
-RUN wget https://raw.githubusercontent.com/kaspar030/git-cache/f76c3a5f0e15f08c28e53fb037755f29f0b76d88/git-cache \
+RUN wget https://raw.githubusercontent.com/kaspar030/git-cache/2a3d0e00d010cd1d7ff3d29c41b5c5178e816d1f/git-cache \
         -O /usr/bin/git-cache \
         && chmod a+x /usr/bin/git-cache
 
