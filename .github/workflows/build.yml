@@ -102,6 +102,16 @@ jobs:
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native pic32-wifire samr21-xpro"
 
+      - name: GNU microbit qemu test
+        run: >
+          docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
+          ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          make -Ctests/fmt_print all test
+
+        env:
+          BOARD: "microbit"
+          EMULATE: 1
+
       - name: LLVM build test
         run: |
           make -CRIOT/examples/hello-world buildtest
