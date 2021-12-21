@@ -43,6 +43,7 @@ COPY --from=chrysn/c2rust-built:for-riot /c2rust_0.0_amd64.deb /pkgs
 # - MSP430 development (about 120 MB installed)
 # - AVR development (about 110 MB installed)
 # - LLVM/Clang build environment (about 125 MB installed)
+# - QEMU
 # All apt files will be deleted afterwards to reduce the size of the container image.
 # The OS must not be updated by apt. Docker image should be build against the latest
 #  updated base OS image. This can be forced with `--pull` flag.
@@ -79,7 +80,9 @@ RUN \
         python3-setuptools \
         python3-wheel \
         p7zip \
+        qemu-system-arm \
         rsync \
+        socat \
         ssh-client \
         subversion \
         unzip \
