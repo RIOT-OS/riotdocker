@@ -310,7 +310,7 @@ ENV RIOTBUILD_COMMIT $RIOTBUILD_COMMIT
 ARG RIOTBUILD_BRANCH=unknown
 ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 
-RUN touch /test
+RUN echo foo > /test
 
 # watch for single ">" vs double ">>"!
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
