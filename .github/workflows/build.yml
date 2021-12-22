@@ -94,6 +94,10 @@ jobs:
           ref: ${{ env.RIOT_BRANCH }}
           path: RIOT
 
+      - name: echo test
+        run: |
+          docker run --rm ${{ env.DOCKER_REGISTRY }}/riotbuild:latest cat /test
+
       - name: GNU build test
         run: |
           make -CRIOT/examples/hello-world buildtest
