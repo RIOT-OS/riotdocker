@@ -121,6 +121,22 @@ jobs:
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           BOARDS: "native samr21-xpro"
 
+      - name: Rust build test
+        run: |
+          # Once 2022.01 is released, the switcharoo can be removed.
+          # Note that `git switch master` does not work because the checkout
+          # action does only minimal fetching.
+          (cd RIOT && git fetch origin master && git checkout FETCH_HEAD)
+          make -CRIOT/examples/rust-hello-world buildtest
+          (cd RIOT && git switch -)
+        env:
+          BUILD_IN_DOCKER: 1
+          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          # Not all of them are actually available; still using the "canonical"
+          # list of representative boards above to keep this stable whil Rust
+          # support expands
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native pic32-wifire samr21-xpro"
+
       - name: Run static tests
         run: |
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
