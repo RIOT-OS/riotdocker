@@ -20,7 +20,7 @@ RUN \
         apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install dwq (disque work queue)
-RUN pip3 install dwq==0.0.50
+RUN pip3 install dwq==0.0.51
 
 # install hiredis -- not required directly, but redis (from dwq) will spew
 # warnings otherwise that break things somewhere further down the line.
