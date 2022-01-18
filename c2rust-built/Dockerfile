@@ -37,10 +37,15 @@ RUN \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly-2019-12-05 && \
 #     true
 #
-# --locked --git --branch ignores --locked; new (2021-03-something) cargo
-# versions behave properly, but C2Rust is on a 2019-12-05 toolchain.
+# Pinned to 6674d785 because that is know to work with 2019-12-05; upgrading
+# this should be unproblematic, but will need the right nightly set.
+#
+# --locked --git --rev ignores --locked so an explicit checkout is done
+# instead; new (2021-03-something) cargo versions behave properly, but C2Rust
+# is on a 2019-12-05 toolchain.
 # RUN \
-    git clone --recursive https://github.com/chrysn-pull-requests/c2rust -b for-riot && \
+    git clone --recursive https://github.com/immunant/c2rust && \
+    git -C c2rust reset --hard 6674d785 && \
     ~/.cargo/bin/cargo install --locked --path c2rust/c2rust && \
 #     true
 #
