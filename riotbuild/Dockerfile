@@ -72,6 +72,7 @@ RUN \
         libffi-dev \
         libpcre3 \
         libtool \
+        libsdl2-dev:i386 \
         m4 \
         ninja-build \
         parallel \
