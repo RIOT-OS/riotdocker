@@ -115,7 +115,7 @@ RUN \
         case "${SYMTARGET}" in "/usr/lib/llvm-${LLVM_VERSION}"* ) ln -sf ${SYMTARGET} ${SYMNAME}; esac \
     done \
     && echo 'Installing local packages' >&2 && \
-        apt install -y --no-install-recommends /pkgs/*.deb \
+    apt-get install -y --no-install-recommends /pkgs/*.deb \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /pkgs
 
