@@ -8,6 +8,7 @@ MURDOCK_USER=${MURDOCK_USER:-murdock}
 MURDOCK_HOME=$(eval echo ~${MURDOCK_USER})
 MURDOCK_QUEUES=${MURDOCK_QUEUES:-default}
 MURDOCK_WORKERS=${MURDOCK_WORKERS:-4}
+MURDOCK_JOBS=${MURDOCK_WORKERS:-4}
 MURDOCK_TMPFS_SIZE=${MURDOCK_TMPFS_SIZE:-$((${MURDOCK_WORKERS}/2))g}
 MURDOCK_CONTAINER=riot/murdock-worker:latest
 
@@ -44,7 +45,9 @@ _start() {
         ${MURDOCK_DOCKER_ARGS} \
         -e CCACHE="ccache" \
         -e CCACHE_MAXSIZE \
+        -e CCACHE_MAXFILES \
         -e DWQ_SSH \
+        -e JOBS="${MURDOCK_JOBS}" \
         ${MURDOCK_CPUSET_CPUS:+--cpuset-cpus=${MURDOCK_CPUSET_CPUS}} \
         ${MURDOCK_CPUSET_MEMS:+--cpuset-mems=${MURDOCK_CPUSET_MEMS}} \
         --security-opt seccomp=unconfined \
