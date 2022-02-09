@@ -155,7 +155,7 @@ ENV MIPS_ELF_ROOT /opt/mips-mti-elf/${MIPS_VERSION}
 ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
-ARG RISCV_VERSION=10.1.0-1.1
+ARG RISCV_VERSION=10.2.0-1.2
 RUN mkdir -p /opt && \
         wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-embed-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
         | tar -C /opt -xz && \
