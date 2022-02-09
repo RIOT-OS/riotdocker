@@ -103,6 +103,7 @@ RUN \
         llvm-${LLVM_VERSION} \
         clang-${LLVM_VERSION} \
         clang-tools-${LLVM_VERSION} \
+        lld-${LLVM_VERSION} \
         llvm \
         clang \
         clang-tools \
