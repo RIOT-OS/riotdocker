@@ -112,6 +112,12 @@ jobs:
           BOARD: "microbit"
           EMULATE: 1
 
+      - name: tests/nanopb test
+        run: >
+          docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
+          ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          make -Ctests/pkg_nanopb all test
+
       - name: LLVM build test
         run: |
           make -CRIOT/examples/hello-world buildtest
