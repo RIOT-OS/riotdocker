@@ -123,12 +123,7 @@ jobs:
 
       - name: Rust build test
         run: |
-          # Once 2022.01 is released, the switcharoo can be removed.
-          # Note that `git switch master` does not work because the checkout
-          # action does only minimal fetching.
-          (cd RIOT && git fetch origin master && git checkout FETCH_HEAD)
           make -CRIOT/examples/rust-hello-world buildtest
-          (cd RIOT && git switch -)
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
