@@ -115,6 +115,11 @@ RUN \
         # Filter by symlinks starting with /usr/bin/llvm-${LLVM_VERSION}
         case "${SYMTARGET}" in "/usr/lib/llvm-${LLVM_VERSION}"* ) ln -sf ${SYMTARGET} ${SYMNAME}; esac \
     done \
+    && echo 'Installing additional packages required for ESP32 toolchain' >&2 && \
+    apt-get -y --no-install-recommends install \
+        python3-serial \
+        libpython2.7 \
+        telnet \
     && echo 'Installing local packages' >&2 && \
     apt-get install -y --no-install-recommends /pkgs/*.deb \
     && echo 'Cleaning up installation files' >&2 && \
@@ -195,30 +200,27 @@ RUN echo 'Installing ESP8266 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/xtensa-esp8266-elf/bin
 ENV ESP8266_RTOS_SDK_DIR /opt/esp/ESP8266_RTOS_SDK
 
-# Install ESP32 toolchain in /opt/esp (181 MB after cleanup)
-# remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
-RUN echo 'Installing ESP32 toolchain' >&2 && \
-    mkdir -p /opt/esp && \
-    cd /opt/esp && \
-    git clone https://github.com/espressif/esp-idf.git && \
-    cd esp-idf && \
-    git checkout -q f198339ec09e90666150672884535802304d23ec && \
-    git submodule update --init --recursive && \
-    rm -rf .git* docs examples make tools && \
-    rm -f add_path.sh CONTRIBUTING.rst Kconfig Kconfig.compiler && \
-    cd components && \
-    rm -rf app_trace app_update aws_iot bootloader bt coap console cxx \
-           esp_adc_cal espcoredump esp_http_client esp-tls expat fatfs \
-           freertos idf_test jsmn json libsodium log lwip mbedtls mdns \
-           micro-ecc nghttp openssl partition_table pthread sdmmc spiffs \
-           tcpip_adapter ulp vfs wear_levelling xtensa-debug-module && \
-    find . -name '*.[csS]' -exec rm {} \; && \
-    cd /opt/esp && \
-    git clone https://github.com/gschorcht/xtensa-esp32-elf.git && \
-    cd xtensa-esp32-elf && \
-    git checkout -q 414d1f3a577702e927973bd906357ee00d7a6c6c
+# Install ESP32 toolchain in /opt/esp (289 MB)
+ARG ESP32_GCC_RELEASE="esp-2021r2-patch3"
+ARG ESP32_GCC_VERSION="gcc8_4_0"
+ARG ESP32_GCC_REPO=https://github.com/espressif/crosstool-NG/releases/download
+ARG ESP32_GCC_FILE=xtensa-esp32-elf-${ESP32_GCC_VERSION}-${ESP32_GCC_RELEASE}-linux-amd64.tar.gz
+ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 
+RUN echo 'Installing ESP32 toolchain' >&2 && \
+    curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xz && \
+    pip install --no-cache-dir pyserial
 ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
+
+# Install ESP32 QEMU in /opt/esp (89 MB)
+ARG ESP32_QEMU_VERSION="esp-develop-20220203"
+ARG ESP32_QEMU_REPO=https://github.com/espressif/qemu/releases/download
+ARG ESP32_QEMU_FILE=qemu-${ESP32_QEMU_VERSION}.tar.bz2
+ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
+
+RUN echo 'Installing ESP32 QEMU' >&2 && \
+    curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp -xj
+ENV PATH $PATH:/opt/esp/qemu/bin
 
 ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
 ARG PICOLIBC_TAG=1.4.6
