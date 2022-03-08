@@ -3,3 +3,6 @@
 
 %:
 	dh $@
+
+override_dh_auto_install:
+	cargo +"`cat c2rust/rust-toolchain`" build --manifest-path c2rust/c2rust/Cargo.toml --locked --release

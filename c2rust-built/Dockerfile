@@ -2,13 +2,17 @@ ARG DOCKER_REGISTRY="riot"
 FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 
 COPY debian/control /dpkg-build/debian/
+# When playing with these, it is often practical to remove the comments on the
+# `# true` / ... / `# RUN \` blocks (making the resulting images larger because
+# of the intermediate files in the chain, but quick to rebuild on small
+# changes) and moving the COPY lines down before the `dpkg-buildpackage` to not
+# download and install all the dependencies again. The control file needs to
+# stay up there as it influences what will be installed.
 COPY debian/rules /dpkg-build/debian/
 COPY debian/changelog /dpkg-build/debian/
+COPY debian/install /dpkg-build/debian/
 
 # noninteractive for the tzinfo
-#
-# The first block is for actually building c2rust, the second for building a
-# Debian package.
 RUN \
     echo 'Update the package index files to latest available versions' >&2 && \
     apt-get update && \
@@ -17,13 +21,13 @@ RUN \
         build-essential \
         ca-certificates \
         curl \
-        git \
-        \
         debhelper \
         devscripts \
         dpkg-dev \
+        equivs \
+        git \
         && \
-    mk-build-deps -i /dpkg-build/debian/control && \
+    mk-build-deps -i /dpkg-build/debian/control -t 'apt-get -y --no-install-recommends' && \
     echo 'Clean up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 #     true
@@ -34,32 +38,23 @@ RUN \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly-2019-12-05 && \
 #     true
 #
-# Pinned to 6674d785 because that is know to work with 2019-12-05; upgrading
-# this should be unproblematic, but will need the right nightly set.
-#
-# --locked --git --rev ignores --locked so an explicit checkout is done
-# instead; new (2021-03-something) cargo versions behave properly, but C2Rust
-# is on a 2019-12-05 toolchain.
-# RUN \
-    git clone --recursive https://github.com/immunant/c2rust && \
-    git -C c2rust reset --hard 6674d785 && \
-    ~/.cargo/bin/cargo install --locked --path c2rust/c2rust && \
-#     true
-#
-# # Rather than going through manual motions like suggested in
-# # https://bugs.debian.org/993498 (using dpkg-shlibdeps to find which of the
-# # packages pulled through build-deps are actually needed), builing a package is
-# # really easy as long as no standards apply.
+# # Build using the provided Debian package sources
 # #
-# # (The `cp` should be c2rust*, but <https://github.com/immunant/c2rust/issues/349>).
+# # Pinned to 6674d785 because that is know to work with 2019-12-05; upgrading
+# # this should be unproblematic, but will need the right nightly set.
+# #
 # RUN \
     mkdir -p /dpkg-build/debian && \
     cd /dpkg-build && \
-    cp -a ~/.cargo/bin/c2rust ~/.cargo/bin/c2rust-transpile . && \
-    ls -1 c2rust* | sed 's@$@ usr/bin@' > debian/install && \
-    dpkg-buildpackage -b && \
+    git clone --recursive https://github.com/immunant/c2rust && \
+    git -C c2rust reset --hard 6674d785 && \
+#     true
+#
+# # Build using Debian's mechanism; the actual build line is in ./debian/rules
+# RUN \
+    cd /dpkg-build && \
+    PATH=~/.cargo/bin:$PATH dpkg-buildpackage -b && \
     cd / && \
-    rm -rf /dpkg-build && \
 #     true
 #
 # # Cleaning up as the relevant files were copied out, and the rest would just
@@ -68,7 +63,7 @@ RUN \
 # # binaries and the debs that contain the stripped binaries and separate debug
 # # symbols once more)
 # RUN \
-    rm -rf c2rust && \
+    rm -rf /dpkg-build && \
     rm -rf ~/.cargo && \
     rm -rf ~/.rustup && \
 #     true
@@ -77,7 +72,7 @@ RUN \
 # # with --root /usr in the cargo line), this also ensures that the dependencies
 # # stick around through the next step.
 # RUN \
-    apt-get -y install /c2rust_0.0_*.deb && \
+    apt-get -y install /c2rust_*.deb && \
 #     true
 #
 # # TBD: Deduplicate list with above; feisty apt-get has no --mark-auto,
@@ -88,12 +83,12 @@ RUN \
         build-essential \
         ca-certificates \
         curl \
-        git \
-        \
         debhelper \
         devscripts \
         dpkg-dev \
-        c2rust-build-dep \
+        equivs \
+        git \
+        c2rust-build-deps \
         && \
     echo 'Cleanup done'
 
