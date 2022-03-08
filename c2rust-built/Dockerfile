@@ -3,6 +3,7 @@ FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 
 COPY debian/control /dpkg-build/debian/
 COPY debian/rules /dpkg-build/debian/
+COPY debian/changelog /dpkg-build/debian/
 
 # noninteractive for the tzinfo
 #
@@ -56,7 +57,6 @@ RUN \
     cd /dpkg-build && \
     cp -a ~/.cargo/bin/c2rust ~/.cargo/bin/c2rust-transpile . && \
     ls -1 c2rust* | sed 's@$@ usr/bin@' > debian/install && \
-    EDITOR=true dch --create --package c2rust --newversion 0.0 && \
     dpkg-buildpackage -b && \
     cd / && \
     rm -rf /dpkg-build && \
