@@ -129,7 +129,11 @@ jobs:
 
       - name: Rust build test
         run: |
-          # Once 2022.01 is released, the switcharoo can be removed.
+          # Once a release is out that can be built on stable, this switcharoo
+          # can be removed -- until then, each release of RIOT is only
+          # supported with the very Rust version that was the configured
+          # nightly it was released with; such is the nature of nightly.
+          #
           # Note that `git switch master` does not work because the checkout
           # action does only minimal fetching.
           (cd RIOT && git fetch origin master && git checkout FETCH_HEAD)
