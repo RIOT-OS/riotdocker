@@ -2,11 +2,16 @@ Source: c2rust
 Section: devel
 Priority: extra
 Maintainer: Christian Amsüss <chrysn@fsfe.org>
-Build-Depends: debhelper-compat (= 12)
+Build-Depends: cmake,
+               debhelper-compat (= 12),
+               libclang-dev,
+               libssl-dev,
+               llvm-dev,
+               pkg-config
 
 Package: c2rust
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: c2rust transpiler
  A tool to translate C modules into semantically equivalent Rust code.
  .

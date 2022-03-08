@@ -15,18 +15,14 @@ RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \
-        cmake \
         curl \
         git \
-        pkg-config \
-        libclang-dev \
-        libssl-dev \
-        llvm-dev \
         \
         debhelper \
         devscripts \
         dpkg-dev \
         && \
+    mk-build-deps -i /dpkg-build/debian/control && \
     echo 'Clean up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 #     true
@@ -91,17 +87,13 @@ RUN \
     apt-get purge -y --auto-remove \
         build-essential \
         ca-certificates \
-        cmake \
         curl \
         git \
-        pkg-config \
-        libclang-dev \
-        libssl-dev \
-        llvm-dev \
         \
         debhelper \
         devscripts \
         dpkg-dev \
+        c2rust-build-dep \
         && \
     echo 'Cleanup done'
 
