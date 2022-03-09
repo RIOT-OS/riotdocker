@@ -1,0 +1,2 @@
+c2rust/target/release/c2rust usr/bin
+c2rust/target/release/c2rust-transpile usr/bin
