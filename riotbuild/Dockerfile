@@ -49,7 +49,7 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 # allow the cleanup to actually save space.
 # Total size without cleaning is approximately 1.525 GB (2016-03-08)
 # After adding the cleanup commands the size is approximately 1.497 GB
-ARG LLVM_VERSION=10
+ARG LLVM_VERSION=14
 RUN \
     dpkg --add-architecture i386 >&2 && \
     echo 'Update the package index files to latest available versions' >&2 && \
