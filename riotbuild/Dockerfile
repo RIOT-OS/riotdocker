@@ -75,7 +75,7 @@ RUN \
         ninja-build \
         parallel \
         protobuf-compiler \
-        python \
+        python2 \
         python3-setuptools \
         python3-wheel \
         p7zip \
