@@ -1,5 +1,5 @@
-c2rust (0.0) UNRELEASED; urgency=medium
+c2rust (0.16.0-0) UNRELEASED; urgency=medium
 
   * Initial package as part of the riotdocker builds.
 
- -- Christian M. Amsüss <chrysn@fsfe.org>  Tue, 08 Mar 2022 16:22:14 +0100
+ -- Christian M. Amsüss <chrysn@fsfe.org>  Fri, 13 May 2022 09:06:27 +0200
