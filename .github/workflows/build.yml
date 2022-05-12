@@ -96,7 +96,7 @@ jobs:
 
       - name: GNU build test
         run: |
-          make -CRIOT/examples/hello-world buildtest
+          make -CRIOT/examples/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
@@ -120,7 +120,7 @@ jobs:
 
       - name: LLVM build test
         run: |
-          make -CRIOT/examples/hello-world buildtest
+          make -CRIOT/examples/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           TOOLCHAIN: llvm
           BUILD_IN_DOCKER: 1
@@ -137,7 +137,7 @@ jobs:
           # Note that `git switch master` does not work because the checkout
           # action does only minimal fetching.
           (cd RIOT && git fetch origin master && git checkout FETCH_HEAD)
-          make -CRIOT/examples/rust-hello-world buildtest
+          make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
           (cd RIOT && git switch -)
         env:
           BUILD_IN_DOCKER: 1
