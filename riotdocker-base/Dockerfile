@@ -28,7 +28,8 @@ RUN mkdir -m 777 -p /data/riotbuild
 
 # Set a global system-wide git user and email address
 RUN git config --system user.name "riot" && \
-    git config --system user.email "riot@example.com"
+    git config --system user.email "riot@example.com" && \
+    git config --system --add safe.directory /data/riotbuild
 
 # Copy our entry point script (signal wrapper)
 COPY run.sh /run.sh
