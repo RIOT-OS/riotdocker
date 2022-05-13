@@ -10,7 +10,6 @@ COPY debian/control /dpkg-build/debian/
 # stay up there as it influences what will be installed.
 COPY debian/rules /dpkg-build/debian/
 COPY debian/changelog /dpkg-build/debian/
-COPY debian/install /dpkg-build/debian/
 
 # noninteractive for the tzinfo
 RUN \
@@ -25,7 +24,6 @@ RUN \
         devscripts \
         dpkg-dev \
         equivs \
-        git \
         && \
     mk-build-deps -i /dpkg-build/debian/control -t 'apt-get -y --no-install-recommends' && \
     echo 'Clean up installation files' >&2 && \
@@ -34,20 +32,15 @@ RUN \
 #
 # # Note that --profile minimal doesn't cut it
 # RUN \
-    echo 'Install c2rust rust nightly' >&2 && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly-2019-12-05 && \
+    echo 'Install c2rust rust' >&2 && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 #     true
 #
 # # Build using the provided Debian package sources
 # #
-# # Pinned to 6674d785 because that is know to work with 2019-12-05; upgrading
-# # this should be unproblematic, but will need the right nightly set.
-# #
 # RUN \
     mkdir -p /dpkg-build/debian && \
     cd /dpkg-build && \
-    git clone --recursive https://github.com/immunant/c2rust && \
-    git -C c2rust reset --hard 6674d785 && \
 #     true
 #
 # # Build using Debian's mechanism; the actual build line is in ./debian/rules
@@ -75,6 +68,12 @@ RUN \
     apt-get -y install /c2rust_*.deb && \
 #     true
 #
+# # Provide the package in an easy to match place independent of version and
+# # architecture
+# RUN \
+    cp -l /c2rust_*.deb /c2rust.deb && \
+#     true
+#
 # # TBD: Deduplicate list with above; feisty apt-get has no --mark-auto,
 # # otherwise we could just --mark-auto above and autoremove --purge here.
 # RUN \
@@ -87,7 +86,6 @@ RUN \
         devscripts \
         dpkg-dev \
         equivs \
-        git \
         c2rust-build-deps \
         && \
     echo 'Cleanup done'

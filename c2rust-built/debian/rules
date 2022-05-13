@@ -5,4 +5,6 @@
 	dh $@
 
 override_dh_auto_install:
-	cargo +"`cat c2rust/rust-toolchain`" build --manifest-path c2rust/c2rust/Cargo.toml --locked --release
+	cargo install --no-track --locked c2rust --git https://github.com/chrysn-pull-requests/c2rust --branch for-riot-20220513 --root debian/c2rust/usr
+	# For unknown reasons --no-track doesn't keep cargo from installing .crates.toml and .crates2.json
+	rm -f debian/c2rust/usr/.??*
