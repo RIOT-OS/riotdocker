@@ -12,7 +12,7 @@ The resulting image fulfils three roles:
 
 * c2rust can be executed in there immediately, or used as a base for other images.
 * The binaries in `/usr/bin/c2rust` can be extracted and used in other images.
-* The `./c2rust_*.deb` package can be copied and installed in other images.
+* The `./c2rust.deb` package can be copied and installed in other images.
   Unlike copying the binaries over, this also ensures that the right LLVM dependencies are installed there.
 
 The parts that can be meaningfully performed by a Debian package are,

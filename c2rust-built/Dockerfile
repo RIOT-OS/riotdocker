@@ -68,6 +68,12 @@ RUN \
     apt-get -y install /c2rust_*.deb && \
 #     true
 #
+# # Provide the package in an easy to match place independent of version and
+# # architecture
+# RUN \
+    cp -l /c2rust_*.deb /c2rust.deb && \
+#     true
+#
 # # TBD: Deduplicate list with above; feisty apt-get has no --mark-auto,
 # # otherwise we could just --mark-auto above and autoremove --purge here.
 # RUN \
