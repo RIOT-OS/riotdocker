@@ -105,7 +105,6 @@ RUN \
         llvm \
         clang \
         clang-tools \
-        && \
     && echo 'Installing C2Rust (build) dependencies' >&2 && \
     apt-get -y --no-install-recommends install \
         libclang-dev \
@@ -314,7 +313,7 @@ RUN \
     done"
 
 RUN \
-    cargo install --no-track --locked c2rust --git https://github.com/chrysn-pull-requests/c2rust --branch for-riot-20220513
+    cargo install --no-track --locked c2rust --git https://github.com/chrysn-pull-requests/c2rust --branch for-riot-20220513b
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
