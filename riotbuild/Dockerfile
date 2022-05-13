@@ -34,8 +34,6 @@ RUN mkdir /pkgs
 COPY files/libsocketcan-dev_0.0.11-1_i386.deb /pkgs/libsocketcan-dev_0.0.11-1_i386.deb
 COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 
-COPY --from=chrysn/c2rust-built:for-riot /c2rust.deb /pkgs
-
 # The following package groups will be installed:
 # - update the package index files to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
@@ -107,6 +105,12 @@ RUN \
         llvm \
         clang \
         clang-tools \
+        && \
+    && echo 'Installing C2Rust (build) dependencies' >&2 && \
+    apt-get -y --no-install-recommends install \
+        libclang-dev \
+        libssl-dev \
+        llvm-dev \
         && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
@@ -308,6 +312,9 @@ RUN \
         rustup target add thumbv8m.base-none-eabi --toolchain \$T && \
         true; \
     done"
+
+RUN \
+    cargo install --no-track --locked c2rust --git https://github.com/chrysn-pull-requests/c2rust --branch for-riot-20220513
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
