@@ -34,7 +34,7 @@ RUN mkdir /pkgs
 COPY files/libsocketcan-dev_0.0.11-1_i386.deb /pkgs/libsocketcan-dev_0.0.11-1_i386.deb
 COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 
-COPY --from=chrysn/c2rust-built:for-riot /c2rust_0.0_amd64.deb /pkgs
+COPY --from=chrysn/c2rust-built:for-riot /c2rust.deb /pkgs
 
 # The following package groups will be installed:
 # - update the package index files to latest available version
