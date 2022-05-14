@@ -293,10 +293,9 @@ ENV PATH ${PATH}:/opt/rustup/.cargo/bin
 # needed on AVR (which thus doesn't need the avr-unknown-gnu-atmega328 target;
 # being able to build core might be useful for other targets as well).
 ENV RUSTUP_HOME /opt/rustup/.rustup
-ENV CARGO_HOME /opt/rustup/.cargo
 RUN \
     RUSTUP_HOME=/opt/rustup/.rustup \
-    sh -c "\
+    CARGO_HOME=/opt/rustup/.cargo sh -c "\
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2022-03-08 && \
     rustup toolchain add stable && \
     for T in nightly-2022-03-08 stable; do \
