@@ -129,6 +129,9 @@ jobs:
 
       - name: Rust build test
         run: |
+          # Some of the above are executed by root, creating ~/.cargo/git as
+          # that user, blocking downloads of own libraries.
+          rm -rf ~/.cargo
           # Once a release is out that can be built on stable, this switcharoo
           # can be removed -- until then, each release of RIOT is only
           # supported with the very Rust version that was the configured
