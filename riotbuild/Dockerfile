@@ -225,14 +225,23 @@ RUN echo 'Installing ESP32 QEMU' >&2 && \
     curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp -xj
 ENV PATH $PATH:/opt/esp/qemu/bin
 
-# Install ESP32C3 toolchain in /opt/esp (344 MB)
+# Install ESP32-C3 toolchain in /opt/esp (344 MB)
 ARG ESP32_GCC_FILE=riscv32-esp-elf-${ESP32_GCC_VERSION}-${ESP32_GCC_RELEASE}-linux-amd64.tar.gz
 ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 
-RUN echo 'Installing ESP32C3 toolchain' >&2 && \
+RUN echo 'Installing ESP32-C3 toolchain' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xz && \
     pip install --no-cache-dir pyserial
 ENV PATH $PATH:/opt/esp/riscv32-esp-elf/bin
+
+# Install ESP32-S2 toolchain in /opt/esp (290 MB)
+ARG ESP32_GCC_FILE=xtensa-esp32s2-elf-${ESP32_GCC_VERSION}-${ESP32_GCC_RELEASE}-linux-amd64.tar.gz
+ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
+
+RUN echo 'Installing ESP32-S2 toolchain' >&2 && \
+    curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xz && \
+    pip install --no-cache-dir pyserial
+ENV PATH $PATH:/opt/esp/xtensa-esp32s2-elf/bin
 
 ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
 ARG PICOLIBC_TAG=1.4.6
