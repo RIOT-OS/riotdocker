@@ -64,6 +64,7 @@ RUN \
         ccache \
         cmake \
         curl \
+        cython3 \
         gcc-multilib \
         gdb \
         g++-multilib \
