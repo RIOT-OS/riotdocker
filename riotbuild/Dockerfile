@@ -49,7 +49,7 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 # allow the cleanup to actually save space.
 # Total size without cleaning is approximately 1.525 GB (2016-03-08)
 # After adding the cleanup commands the size is approximately 1.497 GB
-ARG LLVM_VERSION=10
+ARG LLVM_VERSION=14
 RUN \
     dpkg --add-architecture i386 >&2 && \
     echo 'Update the package index files to latest available versions' >&2 && \
@@ -64,6 +64,7 @@ RUN \
         ccache \
         cmake \
         curl \
+        cython3 \
         gcc-multilib \
         gdb \
         g++-multilib \
@@ -75,7 +76,7 @@ RUN \
         ninja-build \
         parallel \
         protobuf-compiler \
-        python \
+        python2 \
         python3-setuptools \
         python3-wheel \
         p7zip \
@@ -298,7 +299,7 @@ ENV PATH $PATH:/opt/riot-toolchain/msp430-elf/${RIOT_TOOLCHAIN_GCCPKGVER}/bin
 
 # install required python packages from file
 # numpy must be already installed before installing some other requirements (emlearn)
-RUN pip3 install --no-cache-dir numpy==1.17.4
+RUN pip3 install --no-cache-dir numpy==1.22.4
 COPY requirements.txt /tmp/requirements.txt
 RUN echo 'Installing python3 packages' >&2 \
     && pip3 install --no-cache-dir pybind11 \

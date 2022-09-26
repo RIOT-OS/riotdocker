@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
