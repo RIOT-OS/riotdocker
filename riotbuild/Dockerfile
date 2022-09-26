@@ -325,9 +325,9 @@ ENV RUSTUP_HOME /opt/rustup/.rustup
 RUN \
     RUSTUP_HOME=/opt/rustup/.rustup \
     CARGO_HOME=/opt/rustup/.cargo sh -c "\
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2022-09-13 && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2022-09-25 && \
     rustup toolchain add stable && \
-    for T in nightly-2022-09-13 stable; do \
+    for T in nightly-2022-09-25 stable; do \
         rustup component add rust-src --toolchain \$T && \
         rustup target add i686-unknown-linux-gnu --toolchain \$T && \
         rustup target add riscv32imac-unknown-none-elf --toolchain \$T && \
