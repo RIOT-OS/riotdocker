@@ -141,6 +141,7 @@ jobs:
           # action does only minimal fetching.
           (cd RIOT && git fetch origin master && git checkout FETCH_HEAD)
           make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
+          make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
           (cd RIOT && git switch -)
         env:
           BUILD_IN_DOCKER: 1
