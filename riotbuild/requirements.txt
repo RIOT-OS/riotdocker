@@ -12,7 +12,7 @@ cryptography==3.3.2
 scapy>=2.4.3
 protobuf==3.18.3
 scikit-learn==0.22.1
-joblib==0.14.0
+joblib==1.2.0
 emlearn==0.10.1
 jinja2==2.11.3
 riotctrl[rapidjson]>=0.4.0
