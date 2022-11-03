@@ -342,21 +342,18 @@ ENV RUSTUP_HOME /opt/rustup/.rustup
 RUN \
     RUSTUP_HOME=/opt/rustup/.rustup \
     CARGO_HOME=/opt/rustup/.cargo sh -c "\
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly-2022-09-25 && \
-    rustup toolchain add stable && \
-    for T in nightly-2022-09-25 stable; do \
-        rustup component add rust-src --toolchain \$T && \
-        rustup target add i686-unknown-linux-gnu --toolchain \$T && \
-        rustup target add riscv32imac-unknown-none-elf --toolchain \$T && \
-        rustup target add thumbv7em-none-eabihf --toolchain \$T && \
-        rustup target add thumbv7em-none-eabi --toolchain \$T && \
-        rustup target add thumbv7m-none-eabi --toolchain \$T && \
-        rustup target add thumbv6m-none-eabi --toolchain \$T && \
-        rustup target add thumbv8m.main-none-eabihf --toolchain \$T && \
-        rustup target add thumbv8m.main-none-eabi --toolchain \$T && \
-        rustup target add thumbv8m.base-none-eabi --toolchain \$T && \
-        true; \
-    done"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
+    rustup component add rust-src && \
+    rustup target add i686-unknown-linux-gnu && \
+    rustup target add riscv32imac-unknown-none-elf && \
+    rustup target add thumbv7em-none-eabihf && \
+    rustup target add thumbv7em-none-eabi && \
+    rustup target add thumbv7m-none-eabi && \
+    rustup target add thumbv6m-none-eabi && \
+    rustup target add thumbv8m.main-none-eabihf && \
+    rustup target add thumbv8m.main-none-eabi && \
+    rustup target add thumbv8m.base-none-eabi && \
+    true"
 
 RUN \
     echo 'Installing C2Rust' >&2 && \
