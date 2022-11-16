@@ -42,6 +42,9 @@ RUN tar -xvf /${CCACHE_TGZ} --strip-components=1 -C/usr/local/bin && rm /${CCACH
 # install murdock slave startup script
 COPY murdock_slave.sh /usr/bin/murdock_slave
 
+# create cache folder
+RUN mkdir -m777 /cache
+
 ENTRYPOINT ["/bin/bash", "/run.sh"]
 
 # By default, run a shell when no command is specified on the docker command line
