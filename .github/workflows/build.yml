@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RIOT_BRANCH: '2022.10-branch'
-      VERSION_TAG: '2022.10'
+      VERSION_TAG: '2023.01'
       DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
 
     steps:
