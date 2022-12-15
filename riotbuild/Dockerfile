@@ -66,14 +66,17 @@ RUN \
         curl \
         cython3 \
         gcc-multilib \
+        gcc-arm-none-eabi \
+        gcc-riscv64-unknown-elf \
+        gcc-xtensa-lx106 \
         gdb \
         g++-multilib \
         libffi-dev \
         libpcre3 \
         libtool \
         libsdl2-dev:i386 \
+        libnewlib-arm-none-eabi \
         m4 \
-        ninja-build \
         parallel \
         protobuf-compiler \
         python2 \
@@ -129,24 +132,6 @@ RUN \
     && echo 'Cleaning up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /pkgs
 
-# Install ARM GNU embedded toolchain
-# For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-ARG ARM_URLBASE=https://developer.arm.com/-/media/Files/downloads/gnu-rm
-ARG ARM_URL=${ARM_URLBASE}/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
-ARG ARM_MD5=2383e4eb4ea23f248d33adc70dc3227e
-ARG ARM_FOLDER=gcc-arm-none-eabi-10.3-2021.10
-RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
-    mkdir -p /opt && \
-    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 ${ARM_URL} && \
-    echo "${ARM_MD5} /opt/gcc-arm-none-eabi.tar.bz2" | md5sum -c && \
-    tar -C /opt -jxf /opt/gcc-arm-none-eabi.tar.bz2 && \
-    rm -f /opt/gcc-arm-none-eabi.tar.bz2 && \
-    echo 'Removing documentation' >&2 && \
-    rm -rf /opt/gcc-arm-none-eabi-*/share/doc
-    # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
-
-ENV PATH ${PATH}:/opt/${ARM_FOLDER}/bin
-
 # Install MIPS binary toolchain
 # For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
 ARG MIPS_VERSION=2020.06-01
@@ -179,6 +164,18 @@ RUN mkdir -p /opt && \
     cd -
 
 ENV PATH $PATH:/opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin
+
+# Install picolibc Debian package
+ARG PICOLIBC_VERSION=1.7.9-1
+RUN wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-riscv64-unknown-elf_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-arm-none-eabi_${PICOLIBC_VERSION}_all.deb && \
+    wget -P /tmp http://ftp.de.debian.org/debian/pool/main/p/picolibc/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    dpkg -i /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb && \
+    rm /tmp/picolibc-xtensa-lx106-elf_${PICOLIBC_VERSION}_all.deb
 
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
@@ -252,38 +249,6 @@ RUN echo 'Installing ESP32-S3 toolchain' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xz && \
     pip install --no-cache-dir pyserial
 ENV PATH $PATH:/opt/esp/xtensa-esp32s3-elf/bin
-
-ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
-ARG PICOLIBC_TAG=1.4.6
-ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
-ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
-
-RUN echo 'Building and Installing PicoLIBC' >&2 && \
-    pip3 install --no-cache-dir meson && \
-    mkdir -p /usr/src/picolibc && \
-    cd /usr/src/picolibc/ &&\
-    curl -L -o ${PICOLIBC_ARCHIVE} ${PICOLIBC_URL} && \
-    tar -xf ${PICOLIBC_ARCHIVE} && \
-    cd picolibc-${PICOLIBC_TAG}
-
-COPY cross-riscv-none-embed.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
-
-RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
-    which riscv-none-embed-gcc && \
-    ls -al /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin && \
-    mkdir build-arm build-riscv build-esp32 && \
-    cd build-riscv && \
-    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
-    ninja && ninja install && \
-    cd ../build-esp32 && \
-    sh ../do-esp32-configure && \
-    ninja && ninja install && \
-    cd ../build-arm && \
-    sh ../do-arm-configure && \
-    ninja && ninja install
-
-# No need to keep the sources around
-RUN rm -rf /usr/src/picolibc
 
 # RIOT toolchains
 ARG RIOT_TOOLCHAIN_GCC_VERSION=10.1.0
