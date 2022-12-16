@@ -67,6 +67,10 @@ RUN \
         cython3 \
         gcc-multilib \
         gcc-arm-none-eabi \
+        libnewlib-arm-none-eabi \
+        libstdc++-arm-none-eabi-dev \
+        libstdc++-arm-none-eabi-newlib \
+        libstdc++-arm-none-eabi-picolibc \
         gcc-riscv64-unknown-elf \
         gcc-xtensa-lx106 \
         gdb \
@@ -75,7 +79,6 @@ RUN \
         libpcre3 \
         libtool \
         libsdl2-dev:i386 \
-        libnewlib-arm-none-eabi \
         m4 \
         parallel \
         protobuf-compiler \
