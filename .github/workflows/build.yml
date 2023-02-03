@@ -132,6 +132,8 @@ jobs:
           # Some of the above are executed by root, creating ~/.cargo/git as
           # that user, blocking downloads of own libraries.
           rm -rf ~/.cargo
+          # Something left directories that break things
+          (cd RIOT && git clean -fxd)
           make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
           make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
