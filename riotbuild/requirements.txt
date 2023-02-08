@@ -8,7 +8,7 @@ ed25519==1.4
 cbor==1.0.0
 cbor2>=5.0.0
 colorama>=0.4.0
-cryptography==3.3.2
+cryptography==39.0.1
 scapy>=2.4.3
 protobuf==3.18.3
 scikit-learn==0.22.1
