@@ -133,6 +133,12 @@ jobs:
           # that user, blocking downloads of own libraries.
           rm -rf ~/.cargo
           # Something left directories that break things
+          # A git clean wouldn't remove repositories
+          rm -rf RIOT/build
+          # These files can't be removed?
+          ls -ld tests/pkg_nanopb/bin/native/core_lib
+          ls -l tests/pkg_nanopb/bin/native/core_lib/atomic_c11.d
+          rm -rf tests/pkg_nanopb/bin/native/core_lib
           (cd RIOT && git clean -fxd)
           make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
           make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
