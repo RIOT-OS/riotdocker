@@ -366,7 +366,7 @@ RUN \
 
 # get ld-memory from pre-built containers (ld-memory is used for on-the-fly
 # .ld linker script generation)
-COPY --from=kaspar030/ld-memory:0.2 /ld-memory /usr/bin/ld-memory
+COPY --from=kaspar030/ld-memory:0.2.7 /ld-memory /usr/bin/ld-memory
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
