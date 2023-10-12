@@ -3,7 +3,7 @@
 #
 # the resulting image is being used in RIOT's CI (Murdock)
 
-ARG DOCKER_REGISTRY="riot"
+ARG DOCKER_REGISTRY="docker.io/riot"
 FROM ${DOCKER_REGISTRY}/riotbuild:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
