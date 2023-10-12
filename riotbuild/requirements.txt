@@ -11,6 +11,7 @@ colorama>=0.4.0
 cryptography==3.3.2
 scapy>=2.4.3
 protobuf==3.18.3
+scipy == 1.10.1            # needed by scikit-learn, but newer ones fail with jammy's cython
 scikit-learn==0.22.1
 joblib==1.2.0
 emlearn==0.10.1
