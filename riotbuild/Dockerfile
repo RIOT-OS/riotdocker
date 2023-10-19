@@ -361,6 +361,10 @@ RUN \
     echo 'Cleaning up root-owned crates.io cache' >&2 && \
     rm -rf /opt/rustup/.cargo/{git,registry,.package-cache}
 
+# get ld-memory from pre-built containers (ld-memory is used for on-the-fly
+# .ld linker script generation)
+COPY --from=kaspar030/ld-memory:0.2.7 /ld-memory /usr/bin/ld-memory
+
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
 ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
