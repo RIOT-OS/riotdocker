@@ -19,7 +19,7 @@
 # Usage:
 # 1. cd to riot root
 # 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
-ARG DOCKER_REGISTRY="riot"
+ARG DOCKER_REGISTRY="docker.io/riot"
 FROM ${DOCKER_REGISTRY}/static-test-tools:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"

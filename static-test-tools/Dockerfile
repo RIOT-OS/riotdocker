@@ -1,4 +1,4 @@
-ARG DOCKER_REGISTRY="riot"
+ARG DOCKER_REGISTRY="docker.io/riot"
 FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 
 LABEL maintainer="alexandre.abadie@inria.fr"
