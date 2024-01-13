@@ -36,8 +36,8 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
-      RIOT_BRANCH: '2023.04-branch'
-      VERSION_TAG: '2023.07'
+      RIOT_BRANCH: '2023.10-branch'
+      VERSION_TAG: '2024.01'
       DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
 
     steps:
@@ -107,7 +107,7 @@ jobs:
         run: >
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
           ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          make -Ctests/fmt_print all test
+          make -Ctests/sys/fmt_print all test
 
         env:
           BOARD: "microbit"
@@ -117,7 +117,7 @@ jobs:
         run: >
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
           ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          make -Ctests/pkg_nanopb all test
+          make -Ctests/pkg/nanopb all test
 
       - name: LLVM build test
         run: |
@@ -146,7 +146,7 @@ jobs:
 
       - name: C++ build test
         run: |
-          make -C RIOT/tests/cpp11_condition_variable BUILDTEST_MAKE_REDIRECT='' buildtest
+          make -C RIOT/tests/sys/cpp11_condition_variable BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
