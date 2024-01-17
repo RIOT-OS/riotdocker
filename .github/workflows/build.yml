@@ -152,6 +152,11 @@ jobs:
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           BOARDS: "esp32-wroom-32 hifive1b native samr21-xpro"
 
+      - name: laze test
+        run: |
+          docker run --rm -t ${{ env.DOCKER_REGISTRY }}/riotbuild:latest \
+            laze --version
+
       - name: Run static tests
         run: |
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
