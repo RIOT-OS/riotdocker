@@ -361,6 +361,9 @@ RUN \
     echo 'Cleaning up root-owned crates.io cache' >&2 && \
     rm -rf /opt/rustup/.cargo/{git,registry,.package-cache}
 
+# get laze binary
+COPY --from=kaspar030/laze:0.1.20-jammy /laze /usr/bin/laze
+
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
 ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
