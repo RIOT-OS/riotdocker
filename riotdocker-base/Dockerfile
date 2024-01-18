@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
