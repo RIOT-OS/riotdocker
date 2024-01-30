@@ -20,7 +20,7 @@ RUN \
         apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install dwq (disque work queue)
-RUN pip3 install dwq==0.0.60
+RUN pip3 install dwq==0.1.0
 
 # install hiredis -- not required directly, but redis (from dwq) will spew
 # warnings otherwise that break things somewhere further down the line.
@@ -29,10 +29,9 @@ RUN pip3 install hiredis
 # install testrunner dependencies
 RUN pip3 install click
 
-# get git-cache directly from github
-RUN wget https://raw.githubusercontent.com/kaspar030/git-cache/f76c3a5f0e15f08c28e53fb037755f29f0b76d88/git-cache \
-        -O /usr/bin/git-cache \
-        && chmod a+x /usr/bin/git-cache
+# get git-cache-rs binary
+COPY --from=ghcr.io/kaspar030/git-cache:0.1.3-jammy /git-cache /usr/bin/git-cache
+ENV GIT_CACHE_RS /usr/bin/git-cache
 
 # install newer ccache package
 ARG CCACHE_TGZ=ccache-4.7.4-linux-x86_64.tar.xz
