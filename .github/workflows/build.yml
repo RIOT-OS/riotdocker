@@ -133,6 +133,8 @@ jobs:
           # Some of the above are executed by root, creating ~/.cargo/git as
           # that user, blocking downloads of own libraries.
           rm -rf ~/.cargo
+          sed 's/rust-riot-sys/rust-riot-sys", branch = "debug-preprocessor_successor-race/'  -i RIOT/.cargo/config.toml
+          rm RIOT/examples/rust-hello-world/Cargo.lock
           make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
           # TODO: temporarily disabled (sock_udp.h not found)
           #make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
