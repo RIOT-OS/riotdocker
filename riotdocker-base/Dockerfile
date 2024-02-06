@@ -12,6 +12,7 @@ RUN \
         python3 \
         python3-dev \
         python3-pip \
+        python3-venv \
         && \
     echo 'Clean up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
