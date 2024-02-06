@@ -9,7 +9,9 @@ RUN \
     apt-get -y --no-install-recommends install \
         gcc \
         git \
-        python3-full \
+        python3 \
+        python3-dev \
+        python3-pip \
         && \
     echo 'Clean up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
