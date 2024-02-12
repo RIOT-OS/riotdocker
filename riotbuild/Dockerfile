@@ -165,20 +165,20 @@ ENV MIPS_ELF_ROOT /opt/mips-mti-elf/${MIPS_VERSION}
 ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
 
 # Install RISC-V binary toolchain
-ARG RISCV_VERSION=10.2.0-1.2
+ARG RISCV_VERSION=13.2.0-2
 RUN mkdir -p /opt && \
-        wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-embed-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
+        wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-elf-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
         | tar -C /opt -xz && \
     echo 'Removing documentation' >&2 && \
-      rm -rf /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/share/doc && \
+      rm -rf /opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/share/doc && \
     echo 'Deduplicating binaries' >&2 && \
-    cd /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/riscv-none-embed/bin && \
-      for f in *; do test -f "../../bin/riscv-none-embed-$f" && \
-       ln -f "../../bin/riscv-none-embed-$f" "$f"; \
+    cd /opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/riscv-none-elf/bin && \
+      for f in *; do test -f "../../bin/riscv-none-elf-$f" && \
+       ln -f "../../bin/riscv-none-elf-$f" "$f"; \
       done && \
     cd -
 
-ENV PATH $PATH:/opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin
+ENV PATH $PATH:/opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/bin
 
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
@@ -282,14 +282,14 @@ RUN echo 'Building and Installing PicoLIBC' >&2 && \
     tar -xf ${PICOLIBC_ARCHIVE} && \
     cd picolibc-${PICOLIBC_TAG}
 
-COPY cross-riscv-none-embed.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
+COPY cross-riscv-none-elf.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
 
 RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
-    which riscv-none-embed-gcc && \
-    ls -al /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin && \
+    which riscv-none-elf-gcc && \
+    ls -al /opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/bin && \
     mkdir build-arm build-riscv build-esp32 && \
     cd build-riscv && \
-    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-embed/include -Dlibdir=picolibc/riscv-none-embed/lib --cross-file ../cross-riscv-none-embed.txt && \
+    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-elf/include -Dlibdir=picolibc/riscv-none-elf/lib --cross-file ../cross-riscv-none-elf.txt && \
     ninja && ninja install && \
     cd ../build-esp32 && \
     sh ../do-esp32-configure && \
