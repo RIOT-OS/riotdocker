@@ -30,7 +30,7 @@ RUN pip3 install hiredis
 RUN pip3 install click
 
 # get git-cache-rs binary
-COPY --from=ghcr.io/kaspar030/git-cache:0.1.3-jammy /git-cache /usr/bin/git-cache
+COPY --from=ghcr.io/kaspar030/git-cache:0.1.5-jammy /git-cache /usr/bin/git-cache
 ENV GIT_CACHE_RS /usr/bin/git-cache
 
 # install newer ccache package
