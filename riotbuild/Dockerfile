@@ -78,6 +78,7 @@ RUN \
         protobuf-compiler \
         python2 \
         python3-setuptools \
+        python3-venv \
         python3-wheel \
         p7zip \
         qemu-system-arm \
