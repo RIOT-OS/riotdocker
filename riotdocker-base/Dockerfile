@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
@@ -12,9 +12,14 @@ RUN \
         python3 \
         python3-dev \
         python3-pip \
+        python3-venv \
         && \
     echo 'Clean up installation files' >&2 && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# create python environment that allows "pip install" despite PEP 668
+RUN python3 -m venv /local/python-riot
+ENV PATH="/local/python-riot/bin:$PATH"
 
 # compile suid create_user binary
 COPY create_user.c /tmp/create_user.c
