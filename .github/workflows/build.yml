@@ -128,22 +128,21 @@ jobs:
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           BOARDS: "native samr21-xpro"
 
-            # TEMPORARILY disable rust test
-            #      - name: Rust build test
-            #        run: |
-            #          # Some of the above are executed by root, creating ~/.cargo/git as
-            #          # that user, blocking downloads of own libraries.
-            #          rm -rf ~/.cargo
-            #          make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
-            #          # TODO: temporarily disabled (sock_udp.h not found)
-            #          #make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
-            #        env:
-            #          BUILD_IN_DOCKER: 1
-            #          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-            #          # Not all of them are actually available; still using the "canonical"
-            #          # list of representative boards above to keep this stable whil Rust
-            #          # support expands
-            #          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
+      - name: Rust build test
+        run: |
+          # Some of the above are executed by root, creating ~/.cargo/git as
+          # that user, blocking downloads of own libraries.
+          rm -rf ~/.cargo
+          make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
+          # TODO: temporarily disabled (sock_udp.h not found)
+          #make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
+        env:
+          BUILD_IN_DOCKER: 1
+          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
+          # Not all of them are actually available; still using the "canonical"
+          # list of representative boards above to keep this stable whil Rust
+          # support expands
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
 
       - name: C++ build test
         run: |
