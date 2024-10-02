@@ -13,6 +13,7 @@ RUN \
     apt-get update && \
     echo 'Installing static test tools' >&2 && \
     apt-get -y --no-install-recommends install \
+        cargo \
         coccinelle \
         cppcheck \
         doxygen \
