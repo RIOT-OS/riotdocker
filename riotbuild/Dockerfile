@@ -205,68 +205,66 @@ RUN echo 'Installing ESP8266 toolchain' >&2 && \
 ENV PATH $PATH:/opt/esp/xtensa-esp8266-elf/bin
 ENV ESP8266_RTOS_SDK_DIR /opt/esp/ESP8266_RTOS_SDK
 
-# Install ESP32 toolchain in /opt/esp (338 MB)
-ARG ESP32_GCC_RELEASE="esp-12.2.0_20230208"
-ARG ESP32_GCC_VERSION="12.2.0_20230208"
+# Install ESP32x Xtensa toolchain in /opt/esp (1.1 GB)
+ARG ESP32_GCC_RELEASE="esp-14.2.0_20241119"
+ARG ESP32_GCC_VERSION_DIR="14.2.0"
+ARG ESP32_GCC_VERSION_DOWNLOAD="14.2.0_20241119"
 ARG ESP32_GCC_REPO=https://github.com/espressif/crosstool-NG/releases/download
-ARG ESP32_GCC_FILE=xtensa-esp32-elf-${ESP32_GCC_VERSION}-x86_64-linux-gnu.tar.xz
+
+ARG ESP32_GCC_FILE=xtensa-esp-elf-${ESP32_GCC_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
 ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 
-RUN echo 'Installing ESP32 toolchain' >&2 && \
+RUN echo 'Installing ESP32 toolchain for Xtensa' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ && \
     pip install --no-cache-dir pyserial
-ENV PATH $PATH:/opt/esp/xtensa-esp32-elf/bin
+ENV PATH $PATH:/opt/esp/xtensa-esp-elf/bin
 
-# Install ESP32 QEMU in /opt/esp (130 MB)
-ARG ESP32_QEMU_VERSION="esp-develop-20220203"
-ARG ESP32_QEMU_REPO=https://github.com/espressif/qemu/releases/download
-ARG ESP32_QEMU_FILE=qemu-${ESP32_QEMU_VERSION}.tar.bz2
-ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
-
-RUN echo 'Installing ESP32 QEMU' >&2 && \
-    curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp -xj
-ENV PATH $PATH:/opt/esp/qemu/bin
-
-# Install ESP32-C3 toolchain in /opt/esp (859 MB)
-ARG ESP32_GCC_FILE=riscv32-esp-elf-${ESP32_GCC_VERSION}-x86_64-linux-gnu.tar.xz
+# Install ESP32x RISC-V toolchain in /opt/esp (2.1 GB)
+ARG ESP32_GCC_FILE=riscv32-esp-elf-${ESP32_GCC_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
 ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 
-RUN echo 'Installing ESP32-C3 toolchain' >&2 && \
+RUN echo 'Installing ESP32 toolchain for RISC-V' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ
 ENV PATH $PATH:/opt/esp/riscv32-esp-elf/bin
 
-# Install ESP32-S2 toolchain in /opt/esp (340 MB)
-ARG ESP32_GCC_FILE=xtensa-esp32s2-elf-${ESP32_GCC_VERSION}-x86_64-linux-gnu.tar.xz
-ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
+# Install ESP32x QEMU in /opt/esp (136 MB)
+ARG ESP32_QEMU_VERSION="esp-develop-9.0.0-20240606"
+ARG ESP32_QEMU_VERSION_DOWNLOAD="esp_develop_9.0.0_20240606"
+ARG ESP32_QEMU_REPO=https://github.com/espressif/qemu/releases/download
 
-RUN echo 'Installing ESP32-S2 toolchain' >&2 && \
-    curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ
-ENV PATH $PATH:/opt/esp/xtensa-esp32s2-elf/bin
+ARG ESP32_QEMU_FILE=qemu-xtensa-softmmu-${ESP32_QEMU_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
+ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
 
-# Install ESP32-S3 toolchain in /opt/esp (341 MB)
-ARG ESP32_GCC_FILE=xtensa-esp32s3-elf-${ESP32_GCC_VERSION}-x86_64-linux-gnu.tar.xz
-ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
+RUN echo 'Installing ESP32 QEMU for Xtensa' >&2 && \
+    mkdir -p /opt/esp/qemu-xtensa-softmmu && \
+    curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp/qemu-xtensa-softmmu -xJ
+ENV PATH $PATH:/opt/esp/qemu-xtensa-softmmu/bin
 
-RUN echo 'Installing ESP32-S3 toolchain' >&2 && \
-    curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ
-ENV PATH $PATH:/opt/esp/xtensa-esp32s3-elf/bin
+ARG ESP32_QEMU_FILE=qemu-riscv32-softmmu-${ESP32_QEMU_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
+ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
 
-# Install GDB for Xtensa base ESP32 x SoCs in /opt/esp (94 MB)
-ARG ESP32_GDB_VERSION=12.1_20221002
+RUN echo 'Installing ESP32 QEMU for RISC-V' >&2 && \
+    mkdir -p /opt/esp/qemu-riscv32-softmmu && \
+    curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp/qemu-riscv32-softmmu -xJ
+ENV PATH $PATH:/opt/esp/qemu-riscv32-softmmu/bin
+
+# Install GDB for ESP32x Xtensa SoCs in /opt/esp (91 MB)
+ARG ESP32_GDB_VERSION="14.2_20240403"
 ARG ESP32_GDB_REPO=https://github.com/espressif/binutils-gdb/releases/download
 ARG ESP32_GDB_REPO_DIR=esp-gdb-v${ESP32_GDB_VERSION}
+
 ARG ESP32_GDB_FILE=xtensa-esp-elf-gdb-${ESP32_GDB_VERSION}-x86_64-linux-gnu.tar.gz
 ARG ESP32_GDB_URL=${ESP32_GDB_REPO}/${ESP32_GDB_REPO_DIR}/${ESP32_GDB_FILE}
 
-RUN echo 'Installing GDB for Xtensa based ESP32x SoCs' >&2 && \
+RUN echo 'Installing ESP32 GDB for Xtensa' >&2 && \
     curl -L ${ESP32_GDB_URL} | tar -C /opt/esp -xz
 ENV PATH $PATH:/opt/esp/xtensa-esp-elf-gdb/bin
 
-# Install GDB for RISC-V based ESP32 SoCs in /opt/esp (93 MB)
+# Install GDB for ESP32x RISC-V SoCs in /opt/esp (89 MB)
 ARG ESP32_GDB_FILE=riscv32-esp-elf-gdb-${ESP32_GDB_VERSION}-x86_64-linux-gnu.tar.gz
 ARG ESP32_GDB_URL=${ESP32_GDB_REPO}/${ESP32_GDB_REPO_DIR}/${ESP32_GDB_FILE}
 
-RUN echo 'Installing GDB for RISC-V based ESP32x SoCs' >&2 && \
+RUN echo 'Installing ESP32 GDB for RISC-V' >&2 && \
     curl -L ${ESP32_GDB_URL} | tar -C /opt/esp -xz
 ENV PATH $PATH:/opt/esp/riscv32-esp-elf-gdb/bin
 
