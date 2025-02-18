@@ -290,9 +290,6 @@ RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
     cd build-riscv && \
     meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-elf/include -Dlibdir=picolibc/riscv-none-elf/lib --cross-file ../cross-riscv-none-elf.txt && \
     ninja && ninja install && \
-    cd ../build-esp32 && \
-    sh ../do-esp32-configure && \
-    ninja && ninja install && \
     cd ../build-arm && \
     sh ../do-arm-configure && \
     ninja && ninja install
