@@ -97,7 +97,7 @@ jobs:
 
       - name: GNU build test
         run: |
-          make -CRIOT/examples/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
+          make -CRIOT/examples/basic/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
@@ -121,7 +121,7 @@ jobs:
 
       - name: LLVM build test
         run: |
-          make -CRIOT/examples/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
+          make -CRIOT/examples/basic/hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           TOOLCHAIN: llvm
           BUILD_IN_DOCKER: 1
@@ -133,9 +133,9 @@ jobs:
           # Some of the above are executed by root, creating ~/.cargo/git as
           # that user, blocking downloads of own libraries.
           rm -rf ~/.cargo
-          make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
+          make -CRIOT/examples/lang_support/official/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest
           # TODO: temporarily disabled (sock_udp.h not found)
-          #make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
+          #make -CRIOT/examples/lang_support/official/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
