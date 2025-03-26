@@ -1,0 +1,36 @@
+# Maintainer: Marian Buschsieweke <marian.buschsieweke@posteo.net>
+pkgname=tinycbor
+pkgver=0.6.0
+pkgrel=1
+pkgdesc="Concise Binary Object Representation (CBOR) Library"
+url="https://github.com/intel/tinycbor"
+checkdepends="qt5-qtbase-dev"
+# ppc64le: segfault in unit tests
+arch="all !ppc64le"
+license="MIT"
+subpackages="$pkgname-dev lib$pkgname:libs"
+source="
+	$pkgname-$pkgver.tar.gz::https://github.com/intel/tinycbor/archive/v$pkgver.tar.gz
+	0001-disable-failing-tests.patch
+	"
+case "$CARCH" in
+	loongarch64) options="$options !check" ;; #tst_Parser test fail
+esac
+
+build() {
+	make
+}
+
+check() {
+	make check
+}
+
+package() {
+	make DESTDIR="$pkgdir" prefix=/usr/ install
+	rm -f "$pkgdir"/usr/lib/*.a
+}
+
+sha512sums="
+af1ed05c03d3aed56e35fdcaad3235992f96b5043b594c0246e600e4b1f085df78c5345beaac8758c2b5db2952ab83997019de5940857eecb81d84b6fb642093  tinycbor-0.6.0.tar.gz
+752a91386a98f8d5073e2d4ebefa099442232561972cd8149cbf2aea64fcf9344b6519142555173a87da24b225b214ef4083caa0baf6f98f82caa26de7ae1ab1  0001-disable-failing-tests.patch
+"

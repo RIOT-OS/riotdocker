@@ -51,6 +51,125 @@ jobs:
         with:
           driver: docker
 
+      - name: Build tinybuild-apks
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-base
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-apks:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-apks:${{ env.VERSION_TAG }}
+          build-args: |
+
+      - name: Build tinybuild-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-base
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-base:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-base:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+       - name: Build smallbuild-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./smallbuild-base
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-base:latest
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-base:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build tinybuild-arm
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-arm
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-arm:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-arm:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build smallbuild-arm
+        uses: docker/build-push-action@v2
+        with:
+          context: ./smallbuild-arm
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-arm:latest
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-arm:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build tinybuild-avr
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-avr
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-avr:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-avr:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build tinybuild-msp430
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-msp430
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-msp430:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-msp430:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build smallbuild-msp430
+        uses: docker/build-push-action@v2
+        with:
+          context: ./smallbuild-msp430
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-msp430:latest
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-msp430:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build tinybuild-native64
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-native64
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-native64:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-native64:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build smallbuild-native64
+        uses: docker/build-push-action@v2
+        with:
+          context: ./smallbuild-native64
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-native64:latest
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-native64:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build tinybuild-risc-v
+        uses: docker/build-push-action@v2
+        with:
+          context: ./tinybuild-risc-v
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-risc-v:latest
+            ${{ env.DOCKER_REGISTRY }}/tinybuild-risc-v:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Build smallbuild-risc-v
+        uses: docker/build-push-action@v2
+        with:
+          context: ./smallbuild-risc-v
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-risc-v:latest
+            ${{ env.DOCKER_REGISTRY }}/smallbuild-risc-v:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
       - name: Build riotdocker-base
         uses: docker/build-push-action@v2
         with:
@@ -184,6 +303,28 @@ jobs:
       - name: Push Images
         if: "${{ github.ref == 'refs/heads/master' }}"
         run: |
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-base:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-base:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-base:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-base:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-arm:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-arm:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-arm:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-arm:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-avr:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-avr:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-msp430:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-msp430:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-msp430:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-msp430:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-native64:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-native64:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-native64:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-native64:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-risc-v:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/tinybuild-risc-v:${{ env.VERSION_TAG }}
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-risc-v:latest
+          docker image push ${{ env.DOCKER_REGISTRY }}/smallbuild-risc-v:${{ env.VERSION_TAG }}
           docker image push ${{ env.DOCKER_REGISTRY }}/riotdocker-base:latest
           docker image push ${{ env.DOCKER_REGISTRY }}/riotdocker-base:${{ env.VERSION_TAG }}
           docker image push ${{ env.DOCKER_REGISTRY }}/static-test-tools:latest
