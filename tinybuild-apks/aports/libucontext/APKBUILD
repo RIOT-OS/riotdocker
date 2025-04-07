@@ -1,0 +1,53 @@
+# Maintainer: Ariadne Conill <ariadne@dereferenced.org>
+pkgname=libucontext
+pkgver=1.3.2
+pkgrel=1
+pkgdesc="ucontext function implementations"
+url="https://github.com/kaniini/libucontext"
+arch="all"
+license="ISC"
+subpackages="$pkgname-dev"
+if [ "$BOOTSTRAP" != "nobase" ]; then
+	subpackages="$subpackages $pkgname-doc"
+	makedepends="scdoc"
+fi
+source="
+	https://distfiles.ariadne.space/libucontext/libucontext-$pkgver.tar.xz
+
+	0001-fix-header-install-dir.patch
+	"
+
+case "$CTARGET_ARCH" in
+	arm*)		LIBUCONTEXT_ARCH="arm" ;;
+	ppc64le)	LIBUCONTEXT_ARCH="ppc64" ;;
+	*)		LIBUCONTEXT_ARCH="$CTARGET_ARCH" ;;
+esac
+
+build() {
+	make ARCH="$LIBUCONTEXT_ARCH"
+	if [ "$BOOTSTRAP" != "nobase" ]; then
+		make ARCH="$LIBUCONTEXT_ARCH" docs
+	fi
+}
+
+check() {
+	make ARCH="$LIBUCONTEXT_ARCH" check
+}
+
+package() {
+	case "$BOOTSTRAP" in
+	nobase)
+		# omit pkgconfig files during bootstrap to
+		# avoid auto-tracing a dependency on that
+		make ARCH="$LIBUCONTEXT_ARCH" DESTDIR="$pkgdir" pkgconfigdir=/.omit install
+		;;
+	*)
+		make ARCH="$LIBUCONTEXT_ARCH" DESTDIR="$pkgdir" install install_docs
+		;;
+	esac
+}
+
+sha512sums="
+3911a9a772832dad68dc4dbb78ca646cba92170d4e192948e0a6e78295f6ee27f20b637986d39450edae805c96b08f7e1716fa7904fc84258acab8691d87c4f5  libucontext-1.3.2.tar.xz
+55e2b4f58835bf9305e23623cc77e8a0af752a70920f5922466702dc80abb9d545cbc541c1fcd9dc0f9a4d5bcfc1566d6e46ecc92d79c580fde8c3cdb41d0cad  0001-fix-header-install-dir.patch
+"
