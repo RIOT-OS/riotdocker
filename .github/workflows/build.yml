@@ -173,6 +173,31 @@ jobs:
           build-args: |
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
 
+      - name: Build riotbuild-rustnightly
+        uses: docker/build-push-action@v2
+        with:
+          context: ./riotbuild-rustnightly
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/riotbuild-rustnightly:latest
+            ${{ env.DOCKER_REGISTRY }}/riotbuild-rustnightly:${{ env.VERSION_TAG }}
+          build-args: |
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+      - name: Rust build test on Rust nightly
+        run: |
+          # Some of the above are executed by root, creating ~/.cargo/git as
+          # that user, blocking downloads of own libraries.
+          rm -rf ~/.cargo
+          make -CRIOT/examples/rust-hello-world BUILDTEST_MAKE_REDIRECT='' buildtest CARGO_CHANNEL=nightly
+          make -CRIOT/examples/rust-gcoap BUILDTEST_MAKE_REDIRECT='' buildtest CARGO_CHANNEL=nightly
+        env:
+          BUILD_IN_DOCKER: 1
+          DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild-rustnightly:latest
+          # Not all of them are actually available; still using the "canonical"
+          # list of representative boards above to keep this stable whil Rust
+          # support expands
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
+
       - name: Login to DockerHub
         if: "${{ github.ref == 'refs/heads/master' }}"
         uses: docker/login-action@v1
