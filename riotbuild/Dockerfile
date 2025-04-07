@@ -76,7 +76,6 @@ RUN \
         ninja-build \
         parallel \
         protobuf-compiler \
-        python2 \
         python3-setuptools \
         python3-venv \
         python3-wheel \
@@ -123,7 +122,6 @@ RUN \
     && echo 'Installing additional packages required for ESP32 toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
         python3-serial \
-        libpython2.7 \
         telnet \
     && echo 'Installing local packages' >&2 && \
     apt-get install -y --no-install-recommends /pkgs/*.deb \
