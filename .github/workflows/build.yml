@@ -102,7 +102,7 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native32 native64 samr21-xpro"
 
       - name: GNU microbit qemu test
         run: >
@@ -127,7 +127,7 @@ jobs:
           TOOLCHAIN: llvm
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          BOARDS: "native samr21-xpro"
+          BOARDS: "native32 native64 samr21-xpro"
 
       - name: Rust build test
         run: |
@@ -143,7 +143,7 @@ jobs:
           # Not all of them are actually available; still using the "canonical"
           # list of representative boards above to keep this stable whil Rust
           # support expands
-          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native32 native64 samr21-xpro"
 
       - name: C++ build test
         run: |
@@ -151,7 +151,7 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          BOARDS: "esp32-wroom-32 hifive1b native samr21-xpro"
+          BOARDS: "esp32-wroom-32 hifive1b native32 native64 samr21-xpro"
 
       - name: laze test
         run: |
