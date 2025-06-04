@@ -37,8 +37,8 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     env:
-      RIOT_BRANCH: '2025.01-branch'
-      VERSION_TAG: '2025.04'
+      RIOT_BRANCH: '2025.04-branch'
+      VERSION_TAG: '2025.07'
       DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
 
     steps:
