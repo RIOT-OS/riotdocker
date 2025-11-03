@@ -148,23 +148,6 @@ RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
 
 ENV PATH ${PATH}:/opt/${ARM_FOLDER}/bin
 
-# Install MIPS binary toolchain
-# For updates: https://www.mips.com/develop/tools/codescape-mips-sdk/ (select "Codescape GNU Toolchain")
-ARG MIPS_VERSION=2020.06-01
-RUN echo 'Installing mips-mti-elf toolchain from mips.com' >&2 && \
-    mkdir -p /opt && \
-    curl -L "https://codescape.mips.com/components/toolchain/${MIPS_VERSION}/Codescape.GNU.Tools.Package.${MIPS_VERSION}.for.MIPS.MTI.Bare.Metal.CentOS-6.x86_64.tar.gz" -o - \
-        | tar -C /opt -zx && \
-    echo 'Removing documentation and translations' >&2 && \
-    rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale} && \
-    echo 'Deduplicating binaries' && \
-    cd /opt/mips-mti-elf/*/mips-mti-elf/bin && \
-    for f in *; do test -f "../../bin/mips-mti-elf-$f" && ln -f "../../bin/mips-mti-elf-$f" "$f"; done && cd -
-
-ENV MIPS_ELF_ROOT /opt/mips-mti-elf/${MIPS_VERSION}
-
-ENV PATH ${PATH}:${MIPS_ELF_ROOT}/bin
-
 # Install RISC-V binary toolchain
 ARG RISCV_VERSION=13.2.0-2
 RUN mkdir -p /opt && \
