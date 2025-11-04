@@ -38,7 +38,6 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 # - update the package index files to latest available version
 # - native platform development and build system functionality (about 400 MB installed)
 # - Cortex-M development (about 550 MB installed), through the gcc-arm-embedded PPA
-# - MSP430 development (about 120 MB installed)
 # - AVR development (about 110 MB installed)
 # - LLVM/Clang build environment (about 125 MB installed)
 # - QEMU
@@ -47,8 +46,8 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 #  updated base OS image. This can be forced with `--pull` flag.
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
-# Total size without cleaning is approximately 1.525 GB (2016-03-08)
-# After adding the cleanup commands the size is approximately 1.497 GB
+# Total size without cleaning is approximately 1.282 GB (2025-11-04)
+# After adding the cleanup commands the size is approximately 1.0 GB
 ARG LLVM_VERSION=14
 RUN \
     dpkg --add-architecture i386 >&2 && \
@@ -89,10 +88,6 @@ RUN \
         unzip \
         vim-common \
         xsltproc \
-    && echo 'Installing MSP430 toolchain' >&2 && \
-    apt-get -y --no-install-recommends install \
-        gcc-msp430 \
-        msp430-libc \
     && echo 'Installing AVR toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
         gcc-avr \
@@ -345,3 +340,4 @@ ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild
 RUN echo "RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT" >> /etc/riotbuild
 RUN echo "RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH" >> /etc/riotbuild
+
