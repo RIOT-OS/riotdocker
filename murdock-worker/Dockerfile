@@ -29,8 +29,9 @@ RUN pip3 install hiredis
 # install testrunner dependencies
 RUN pip3 install click
 
-# get git-cache-rs binary
-COPY --from=ghcr.io/kaspar030/git-cache:0.1.5-jammy /git-cache /usr/bin/git-cache
+# get git-cache-rs binary and set the environment variable for
+# the RIOT package subsystem
+COPY --from=ghcr.io/kaspar030/git-cache:0.2.8-jammy /git-cache /usr/bin/git-cache
 ENV GIT_CACHE_RS /usr/bin/git-cache
 
 # install newer ccache package
@@ -43,6 +44,9 @@ COPY murdock_slave.sh /usr/bin/murdock_slave
 
 # create cache folder
 RUN mkdir -m777 /cache
+
+# remove old git-cache-rs files from before the directory structure changed
+RUN rm -rf /cache/.gitcache/*.git /cache/.gitcache/*.lock
 
 # set cache folder for Download Cache
 ENV DLCACHE_DIR /cache/.dlcache
