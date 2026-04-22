@@ -26,10 +26,20 @@ runcommand() {
     return "$retval"
 }
 
-# create passwd entry for current uid, fix HOME variable
-# only execute, if the current uid does not exist.
-if ! id $(id -u) >/dev/null 2>/dev/null; then
-    create_user $(id -u)
+# Create passwd entry with the UID and GID of the user running the
+# `riotdocker-base` container and any containers derived from it.
+# It also sets the HOME variable.
+# Only execute, if the current UID does not exist.
+if ! id "$(id -u)" >/dev/null 2>/dev/null; then
+    if [ "$(id -u)" -ne 0 ] && [ "$(id -g)" -eq 0 ]; then
+        # Fallback to UID:UID if the container is run without setting a GID
+	echo -e "\e[33mWarning: The Docker User ID is $(id -u), but the" \
+		"Group ID is 0 (root), update your RIOT repository or check" \
+		"the Docker call!\e[0m"
+        create_user "$(id -u)" "$(id -u)"
+    else
+        create_user "$(id -u)" "$(id -g)"
+    fi
 fi
 export HOME=/data/riotbuild
 
