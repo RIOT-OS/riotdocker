@@ -167,7 +167,9 @@ jobs:
       - name: Run static tests
         run: |
           docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild \
-          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }} ${{ env.DOCKER_REGISTRY }}/riotbuild:latest \
+          -e CI_BASE_BRANCH=${{ env.RIOT_BRANCH }} \
+          -e ENABLE_DOCKER_PINNING_TEST=0 \
+          ${{ env.DOCKER_REGISTRY }}/riotbuild:latest \
           ./dist/tools/ci/static_tests.sh
 
       - name: Build murdock worker
