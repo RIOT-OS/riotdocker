@@ -3,10 +3,10 @@ FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 
 LABEL maintainer="alexandre.abadie@inria.fr"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 RUN \
     echo 'Update the package index files to latest available versions' >&2 && \
@@ -42,7 +42,7 @@ COPY --from=ghcr.io/kaspar030/uncrustify-builder:latest /usr/bin/uncrustify /usr
 # While sourcing ~/.cargo/env later would have the right short-term effect,
 # we'd still need to set the right path even later when HOME is
 # /data/riotbuild -- so setting it right away.
-ENV PATH ${PATH}:/opt/rustup/.cargo/bin
+ENV PATH=${PATH}:/opt/rustup/.cargo/bin
 
 # Install Rust via rustup; this is needed for Rust-on-RIOT builds and contains
 # all CARGO_TARGETs currently recognized for RIOT targets.
@@ -55,7 +55,7 @@ ENV PATH ${PATH}:/opt/rustup/.cargo/bin
 #
 # Components: fmt is needed for the static test tools as those do `cargo fmt`
 # checks. More are added for riotbuild.
-ENV RUSTUP_HOME /opt/rustup/.rustup
+ENV RUSTUP_HOME=/opt/rustup/.rustup
 RUN \
     CARGO_HOME=/opt/rustup/.cargo sh -c "\
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal && \
