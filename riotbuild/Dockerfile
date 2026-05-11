@@ -24,10 +24,10 @@ FROM ${DOCKER_REGISTRY}/static-test-tools:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 # copy some included packages
 RUN mkdir /pkgs
@@ -141,7 +141,7 @@ RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     rm -rf /opt/gcc-arm-none-eabi-*/share/doc
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
 
-ENV PATH ${PATH}:/opt/${ARM_FOLDER}/bin
+ENV PATH=${PATH}:/opt/${ARM_FOLDER}/bin
 
 # Install RISC-V binary toolchain
 ARG RISCV_VERSION=13.2.0-2
@@ -157,7 +157,7 @@ RUN mkdir -p /opt && \
       done && \
     cd -
 
-ENV PATH $PATH:/opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/bin
+ENV PATH=$PATH:/opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/bin
 
 # Install complete ESP8266 toolchain in /opt/esp (139 MB after cleanup)
 # remember https://github.com/RIOT-OS/RIOT/pull/10801 when updating
@@ -180,8 +180,8 @@ RUN echo 'Installing ESP8266 toolchain' >&2 && \
     find . -type f -name '*.[csS]' -exec rm {} \; && \
     find . -type f -name '*.cpp' -exec rm {} \;
 
-ENV PATH $PATH:/opt/esp/xtensa-esp8266-elf/bin
-ENV ESP8266_RTOS_SDK_DIR /opt/esp/ESP8266_RTOS_SDK
+ENV PATH=$PATH:/opt/esp/xtensa-esp8266-elf/bin
+ENV ESP8266_RTOS_SDK_DIR=/opt/esp/ESP8266_RTOS_SDK
 
 # Install ESP32x Xtensa toolchain in /opt/esp (1.1 GB)
 ARG ESP32_GCC_RELEASE="esp-14.2.0_20241119"
@@ -195,7 +195,7 @@ ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 RUN echo 'Installing ESP32 toolchain for Xtensa' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ && \
     pip install --no-cache-dir pyserial
-ENV PATH $PATH:/opt/esp/xtensa-esp-elf/bin
+ENV PATH=$PATH:/opt/esp/xtensa-esp-elf/bin
 
 # Install ESP32x RISC-V toolchain in /opt/esp (2.1 GB)
 ARG ESP32_GCC_FILE=riscv32-esp-elf-${ESP32_GCC_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
@@ -203,7 +203,7 @@ ARG ESP32_GCC_URL=${ESP32_GCC_REPO}/${ESP32_GCC_RELEASE}/${ESP32_GCC_FILE}
 
 RUN echo 'Installing ESP32 toolchain for RISC-V' >&2 && \
     curl -L ${ESP32_GCC_URL} | tar -C /opt/esp -xJ
-ENV PATH $PATH:/opt/esp/riscv32-esp-elf/bin
+ENV PATH=$PATH:/opt/esp/riscv32-esp-elf/bin
 
 # Install ESP32x QEMU in /opt/esp (136 MB)
 ARG ESP32_QEMU_VERSION="esp-develop-9.0.0-20240606"
@@ -216,7 +216,7 @@ ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
 RUN echo 'Installing ESP32 QEMU for Xtensa' >&2 && \
     mkdir -p /opt/esp/qemu-xtensa-softmmu && \
     curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp/qemu-xtensa-softmmu -xJ
-ENV PATH $PATH:/opt/esp/qemu-xtensa-softmmu/bin
+ENV PATH=$PATH:/opt/esp/qemu-xtensa-softmmu/bin
 
 ARG ESP32_QEMU_FILE=qemu-riscv32-softmmu-${ESP32_QEMU_VERSION_DOWNLOAD}-x86_64-linux-gnu.tar.xz
 ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
@@ -224,7 +224,7 @@ ARG ESP32_QEMU_URL=${ESP32_QEMU_REPO}/${ESP32_QEMU_VERSION}/${ESP32_QEMU_FILE}
 RUN echo 'Installing ESP32 QEMU for RISC-V' >&2 && \
     mkdir -p /opt/esp/qemu-riscv32-softmmu && \
     curl -L ${ESP32_QEMU_URL} | tar -C /opt/esp/qemu-riscv32-softmmu -xJ
-ENV PATH $PATH:/opt/esp/qemu-riscv32-softmmu/bin
+ENV PATH=$PATH:/opt/esp/qemu-riscv32-softmmu/bin
 
 # Install GDB for ESP32x Xtensa SoCs in /opt/esp (91 MB)
 ARG ESP32_GDB_VERSION="14.2_20240403"
@@ -236,7 +236,7 @@ ARG ESP32_GDB_URL=${ESP32_GDB_REPO}/${ESP32_GDB_REPO_DIR}/${ESP32_GDB_FILE}
 
 RUN echo 'Installing ESP32 GDB for Xtensa' >&2 && \
     curl -L ${ESP32_GDB_URL} | tar -C /opt/esp -xz
-ENV PATH $PATH:/opt/esp/xtensa-esp-elf-gdb/bin
+ENV PATH=$PATH:/opt/esp/xtensa-esp-elf-gdb/bin
 
 # Install GDB for ESP32x RISC-V SoCs in /opt/esp (89 MB)
 ARG ESP32_GDB_FILE=riscv32-esp-elf-gdb-${ESP32_GDB_VERSION}-x86_64-linux-gnu.tar.gz
@@ -244,7 +244,7 @@ ARG ESP32_GDB_URL=${ESP32_GDB_REPO}/${ESP32_GDB_REPO_DIR}/${ESP32_GDB_FILE}
 
 RUN echo 'Installing ESP32 GDB for RISC-V' >&2 && \
     curl -L ${ESP32_GDB_URL} | tar -C /opt/esp -xz
-ENV PATH $PATH:/opt/esp/riscv32-esp-elf-gdb/bin
+ENV PATH=$PATH:/opt/esp/riscv32-esp-elf-gdb/bin
 
 ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
 ARG PICOLIBC_TAG=1.4.6
@@ -285,7 +285,7 @@ ARG RIOT_TOOLCHAIN_SUBDIR=${RIOT_TOOLCHAIN_GCCPKGVER}-${RIOT_TOOLCHAIN_TAG}
 ARG MSP430_URL=https://github.com/RIOT-OS/toolchains/releases/download/${RIOT_TOOLCHAIN_SUBDIR}/riot-msp430-elf-${RIOT_TOOLCHAIN_GCCPKGVER}.tgz
 RUN echo 'Installing RIOT MSP430 ELF toolchain' >&2 && \
         wget -q ${MSP430_URL} -O- | tar -C /opt -xz
-ENV PATH $PATH:/opt/riot-toolchain/msp430-elf/${RIOT_TOOLCHAIN_GCCPKGVER}/bin
+ENV PATH=$PATH:/opt/riot-toolchain/msp430-elf/${RIOT_TOOLCHAIN_GCCPKGVER}/bin
 
 # install required python packages from file
 # numpy must be already installed before installing some other requirements (emlearn)
@@ -328,13 +328,13 @@ COPY --from=kaspar030/laze:0.1.20-jammy /laze /usr/bin/laze
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
-ENV RIOTBUILD_VERSION $RIOTBUILD_VERSION
+ENV RIOTBUILD_VERSION=$RIOTBUILD_VERSION
 
 ARG RIOTBUILD_COMMIT=unknown
-ENV RIOTBUILD_COMMIT $RIOTBUILD_COMMIT
+ENV RIOTBUILD_COMMIT=$RIOTBUILD_COMMIT
 
 ARG RIOTBUILD_BRANCH=unknown
-ENV RIOTBUILD_BRANCH $RIOTBUILD_BRANCH
+ENV RIOTBUILD_BRANCH=$RIOTBUILD_BRANCH
 
 # watch for single ">" vs double ">>"!
 RUN echo "RIOTBUILD_VERSION=$RIOTBUILD_VERSION" > /etc/riotbuild

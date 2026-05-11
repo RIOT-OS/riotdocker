@@ -8,7 +8,7 @@ FROM ${DOCKER_REGISTRY}/riotbuild:latest
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
     echo 'Upgrading all system packages to the latest available versions' >&2 && \
@@ -31,7 +31,7 @@ RUN pip3 install click
 
 # get git-cache-rs binary
 COPY --from=ghcr.io/kaspar030/git-cache:0.1.5-jammy /git-cache /usr/bin/git-cache
-ENV GIT_CACHE_RS /usr/bin/git-cache
+ENV GIT_CACHE_RS=/usr/bin/git-cache
 
 # install newer ccache package
 ARG CCACHE_TGZ=ccache-4.7.4-linux-x86_64.tar.xz
@@ -45,7 +45,7 @@ COPY murdock_slave.sh /usr/bin/murdock_slave
 RUN mkdir -m777 /cache
 
 # set cache folder for Download Cache
-ENV DLCACHE_DIR /cache/.dlcache
+ENV DLCACHE_DIR=/cache/.dlcache
 
 ENTRYPOINT ["/bin/bash", "/run.sh"]
 
