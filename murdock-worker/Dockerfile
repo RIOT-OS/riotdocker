@@ -1,4 +1,3 @@
-#
 # RIOT Murdock Dockerfile
 #
 # the resulting image is being used in RIOT's CI (Murdock)
