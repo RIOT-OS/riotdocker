@@ -61,17 +61,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
         with:
           lfs: 'true'
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v4
         with:
           driver: docker
 
       - name: Build riotdocker-base
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
           context: ./riotdocker-base
           tags: |
@@ -79,7 +79,7 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/riotdocker-base:${{ env.VERSION_TAG }}
 
       - name: Build static-test-tools
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
           context: ./static-test-tools
           tags: |
@@ -95,7 +95,7 @@ jobs:
           echo "RIOTBUILD_VERSION=$(git describe --always)" >> $GITHUB_ENV
 
       - name: Build riotbuild
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
           context: ./riotbuild
           tags: |
@@ -108,7 +108,7 @@ jobs:
             RIOTBUILD_VERSION=${{ env.RIOTBUILD_VERSION }}
 
       - name: Checkout RIOT
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
         with:
           repository: RIOT-OS/RIOT
           ref: ${{ env.RIOT_BRANCH }}
@@ -191,7 +191,7 @@ jobs:
           ./dist/tools/ci/static_tests.sh
 
       - name: Build murdock worker
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
           context: ./murdock-worker
           tags: |
@@ -202,7 +202,7 @@ jobs:
 
       - name: Login to DockerHub
         if: "${{ github.ref == 'refs/heads/master' && needs.check-secret.outputs.secret-configured == 'true' }}"
-        uses: docker/login-action@v1
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
