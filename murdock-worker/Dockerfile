@@ -29,11 +29,6 @@ RUN pip3 install hiredis
 # install testrunner dependencies
 RUN pip3 install click
 
-# get git-cache-rs binary and set the environment variable for
-# the RIOT package subsystem
-COPY --from=ghcr.io/kaspar030/git-cache:0.2.8-jammy /git-cache /usr/bin/git-cache
-ENV GIT_CACHE_RS /usr/bin/git-cache
-
 # install newer ccache package
 ARG CCACHE_TGZ=ccache-4.7.4-linux-x86_64.tar.xz
 COPY files/${CCACHE_TGZ}  /
