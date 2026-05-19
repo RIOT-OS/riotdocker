@@ -1,3 +1,8 @@
+# `riotdocker-base` Dockerfile
+#
+# This container sets the foundation for all subsequent containers and
+# initializes the user environment.
+
 FROM ubuntu:jammy
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
@@ -20,7 +25,7 @@ RUN \
 COPY create_user.c /tmp/create_user.c
 RUN gcc -DHOMEDIR=\"/data/riotbuild\" -DUSERNAME=\"riotbuild\" /tmp/create_user.c -o /usr/local/bin/create_user \
     && chown root:root /usr/local/bin/create_user \
-    && chmod u=rws,g=x,o=- /usr/local/bin/create_user \
+    && chmod u=rws,g=x,o=x /usr/local/bin/create_user \
     && rm /tmp/create_user.c
 
 # Create working directory for mounting the RIOT sources

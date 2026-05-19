@@ -1,3 +1,8 @@
+# `static-test-tools` Dockerfile
+#
+# This container has all the dependencies required to execute the static tests
+# for the RIOT sources.
+
 ARG DOCKER_REGISTRY="docker.io/riot"
 FROM ${DOCKER_REGISTRY}/riotdocker-base:latest
 

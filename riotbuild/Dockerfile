@@ -1,24 +1,8 @@
+# `riotbuild` Dockerfile
 #
-# RIOT Dockerfile
-#
-# The resulting image will contain everything needed to build RIOT for all
-# supported platforms. This is the largest build image, it takes about 1.5 GB in
-# total.
-#
-# Setup:
-# 1. Install docker, add yourself to docker group, enable docker, relogin
-#
-# Use prebuilt image:
-# 1. Prebuilt image can be pulled from Docker Hub registry with:
-#      # docker pull riot/riotbuild
-#
-# Use own build image:
-# 1. Build own image based on latest base OS image (from the riotbuild directory):
-#      # docker build --pull -t riotbuild .
-#
-# Usage:
-# 1. cd to riot root
-# 2. # docker run -i -t -u $UID -v $(pwd):/data/riotbuild riotbuild ./dist/tools/compile_test/compile_test.py
+# This container includes the whole build toolchain required to build all
+# platforms supported by RIOT.
+
 ARG DOCKER_REGISTRY="docker.io/riot"
 FROM ${DOCKER_REGISTRY}/static-test-tools:latest
 
@@ -325,6 +309,11 @@ RUN \
 
 # get laze binary
 COPY --from=kaspar030/laze:0.1.20-jammy /laze /usr/bin/laze
+
+# get git-cache-rs binary and set the environment variable for
+# the RIOT package subsystem
+COPY --from=ghcr.io/kaspar030/git-cache:0.2.8-jammy /git-cache /usr/bin/git-cache
+ENV GIT_CACHE_RS=/usr/bin/git-cache
 
 # get Dockerfile version from build args
 ARG RIOTBUILD_VERSION=unknown
