@@ -292,6 +292,7 @@ RUN \
     rustup component add rust-src && \
     rustup target add i686-unknown-linux-gnu && \
     rustup target add riscv32imac-unknown-none-elf && \
+    rustup target add riscv64imac-unknown-none-elf && \
     rustup target add thumbv7em-none-eabihf && \
     rustup target add thumbv7em-none-eabi && \
     rustup target add thumbv7m-none-eabi && \
