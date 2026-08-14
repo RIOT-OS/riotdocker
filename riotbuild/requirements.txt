@@ -32,5 +32,4 @@ cbor==1.0.0
 cbor2>=5.0.0
 colorama>=0.4.0
 cryptography>=48.0.0
-ed25519==1.4
 pyhsslms>=1.0.0
