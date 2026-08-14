@@ -20,23 +20,29 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 
 # The following package groups will be installed:
 # - update the package index files to latest available version
+# - LLVM/Clang build environment (about 886 MB installed)
 # - native platform development and build system functionality (about 400 MB installed)
 # - Cortex-M development (about 550 MB installed), through the gcc-arm-embedded PPA
 # - AVR development (about 110 MB installed)
-# - LLVM/Clang build environment (about 125 MB installed)
 # - QEMU
 # All apt files will be deleted afterwards to reduce the size of the container image.
 # The OS must not be updated by apt. Docker image should be build against the latest
 #  updated base OS image. This can be forced with `--pull` flag.
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
-# Total size without cleaning is approximately 1.282 GB (2025-11-04)
-# After adding the cleanup commands the size is approximately 1.0 GB
-ARG LLVM_VERSION=14
+ARG LLVM_VERSION=15
 RUN \
     dpkg --add-architecture i386 >&2 && \
     echo 'Update the package index files to latest available versions' >&2 && \
     apt-get update \
+    && echo 'Installing LLVM/Clang toolchain' >&2 && \
+    apt-get -y --no-install-recommends install \
+        llvm-${LLVM_VERSION} \
+        llvm-${LLVM_VERSION}-dev \
+        clang-${LLVM_VERSION} \
+        clang-tools-${LLVM_VERSION} \
+        libclang-${LLVM_VERSION}-dev \
+        lld-${LLVM_VERSION} \
     && echo 'Installing native toolchain and build system functionality' >&2 && \
     apt-get -y --no-install-recommends install \
         afl++ \
@@ -75,20 +81,9 @@ RUN \
         gcc-avr \
         binutils-avr \
         avr-libc \
-    && echo 'Installing LLVM/Clang toolchain' >&2 && \
-    apt-get -y --no-install-recommends install \
-        llvm-${LLVM_VERSION} \
-        clang-${LLVM_VERSION} \
-        clang-tools-${LLVM_VERSION} \
-        lld-${LLVM_VERSION} \
-        llvm \
-        clang \
-        clang-tools \
     && echo 'Installing C2Rust (build) dependencies' >&2 && \
     apt-get -y --no-install-recommends install \
-        libclang-dev \
         libssl-dev \
-        llvm-dev \
         && \
     SYMS=$(find /usr/bin -type l) && \
     for file in ${SYMS}; do \
