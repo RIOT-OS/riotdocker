@@ -55,8 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-secret]
     env:
-      RIOT_BRANCH: '2026.04-branch'
-      VERSION_TAG: '2026.07'
+      RIOT_BRANCH: 'master'
+      VERSION_TAG: '2026.10'
       DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
 
     steps:
