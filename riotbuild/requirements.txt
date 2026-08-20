@@ -15,7 +15,7 @@ scapy>=2.4.3                # used by network tests
 
 ## mcuboot
 ecdsa==0.13.3
-pyasn1==0.4.2
+pyasn1==0.6.4
 pycryptodome==3.11.0
 
 ## pkg/NanoPb
