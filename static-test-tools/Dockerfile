@@ -25,7 +25,6 @@ RUN \
         graphviz \
         less \
         make \
-        pcregrep \
         shellcheck \
         vera++ \
         wget \

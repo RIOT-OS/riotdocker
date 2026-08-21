@@ -51,7 +51,6 @@ RUN \
         gdb \
         g++-multilib \
         libffi-dev \
-        libpcre3 \
         libtool \
         libsdl2-dev \
         libsdl2-dev:i386 \
