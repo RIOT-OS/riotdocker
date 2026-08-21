@@ -76,3 +76,14 @@ or test of your liking:
 ```sh
 BUILD_IN_DOCKER=1 DOCKER_IMAGE=f610ef8e4bbd BOARD=nrf52840dk make -C tests/sys/shell
 ```
+
+## Notes for Release Managers
+
+The version in `.github/workflows/build.yml` has to be advanced on every RIOT
+release and be ahead of the RIOT release. For example, when RIOT 2026.07 was
+released, the version for the docker container has to be advanced to 2026.10.
+
+By advancing the version, the image version matching the RIOT release version
+on the Docker Hub will not be changed anymore by changes to the container
+repository and therefore will not cause issues with the Buildsystem Sanity
+Check of RIOT.
