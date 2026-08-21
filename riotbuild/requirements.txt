@@ -19,7 +19,7 @@ pyasn1==0.4.2
 pycryptodome==3.11.0
 
 ## pkg/NanoPb
-protobuf==3.18.3
+protobuf==5.29.6
 
 ## pkg/emlearn
 pybind11
