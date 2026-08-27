@@ -14,7 +14,7 @@ scapy>=2.4.3                # used by network tests
 # Package and Application dependencies
 
 ## mcuboot
-ecdsa==0.13.3
+ecdsa==0.19.2
 pyasn1==0.6.4
 pycryptodome==3.23.0
 
