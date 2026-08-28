@@ -120,13 +120,13 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          APPLICATIONS: RIOT/examples/basic/hello-world
-          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
-          TOOLCHAIN: llvm
+          APPLICATIONS: examples/basic/hello-world
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native32 native64 samr21-xpro"
+          TOOLCHAIN: gnu
 
       - name: GNU microbit qemu test
         run: >
-          docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
+          docker run --rm --tty --user $(id -u):$(id -g) -v $(pwd)/RIOT:/data/riotbuild
           ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           make -Ctests/sys/fmt_print all test
 
@@ -136,7 +136,7 @@ jobs:
 
       - name: tests/nanopb test
         run: >
-          docker run --rm -t -v $(pwd)/RIOT:/data/riotbuild
+          docker run --rm --tty --user $(id -u):$(id -g) -v $(pwd)/RIOT:/data/riotbuild
           ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
           make -Ctests/pkg/nanopb all test
 
@@ -146,8 +146,8 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          APPLICATIONS: RIOT/examples/basic/hello-world
-          BOARDS: "native samr21-xpro"
+          APPLICATIONS: examples/basic/hello-world
+          BOARDS: "native32 native64 samr21-xpro"
           TOOLCHAIN: llvm
 
       - name: Rust build test
@@ -159,12 +159,11 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          # TODO: rust-gcoap temporarily disabled (sock_udp.h not found)
-          APPLICATIONS: RIOT/examples/lang_support/official/rust-hello-world #RIOT/examples/lang_support/official/rust-gcoap
+          APPLICATIONS: examples/lang_support/official/rust-hello-world examples/lang_support/official/rust-gcoap
           # Not all of them are actually available; still using the "canonical"
-          # list of representative boards above to keep this stable whil Rust
+          # list of representative boards above to keep this stable while Rust
           # support expands
-          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native samr21-xpro"
+          BOARDS: "arduino-uno esp32-wroom-32 hifive1b msb-430h native32 native64 samr21-xpro"
           TOOLCHAIN: gnu
 
       - name: C++ build test
@@ -173,8 +172,8 @@ jobs:
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
-          APPLICATIONS: RIOT/tests/sys/cpp11_condition_variable
-          BOARDS: "esp32-wroom-32 hifive1b native samr21-xpro"
+          APPLICATIONS: tests/sys/cpp11_condition_variable
+          BOARDS: "esp32-wroom-32 hifive1b native32 native64 samr21-xpro"
           TOOLCHAIN: gnu
 
       - name: laze test
