@@ -298,7 +298,7 @@ RUN \
 
 RUN \
     echo 'Installing C2Rust' >&2 && \
-    CARGO_HOME=/opt/rustup/.cargo cargo install --no-track --locked c2rust --git https://github.com/immunant/c2rust --tag v0.19.0 && \
+    CARGO_HOME=/opt/rustup/.cargo cargo install --no-track --locked c2rust --git https://github.com/immunant/c2rust --tag v0.22.1 && \
     echo 'Cleaning up root-owned crates.io cache' >&2 && \
     rm -rf /opt/rustup/.cargo/{git,registry,.package-cache}
 
