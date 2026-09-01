@@ -74,7 +74,7 @@ RUN \
         ssh-client \
         subversion \
         unzip \
-        vim-common \
+        xxd \
         xsltproc \
     && echo 'Installing AVR toolchain' >&2 && \
     apt-get -y --no-install-recommends install \
