@@ -5,7 +5,6 @@
 # category and document their purpose (i.e. the module they're used for).
 
 # RIOT toolchain dependencies
-jinja2==2.11.3              # used by STM32 vector and IRQ file generation
 pexpect==4.8.0              # used by testing infrastructure
 pyserial==3.4               # used by ESP32 toolchain
 riotctrl[rapidjson]>=0.4.0
