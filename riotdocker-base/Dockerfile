@@ -3,7 +3,7 @@
 # This container sets the foundation for all subsequent containers and
 # initializes the user environment.
 
-FROM ubuntu:jammy
+FROM ubuntu:resolute
 
 LABEL maintainer="Kaspar Schleiser <kaspar@riot-os.org>"
 
