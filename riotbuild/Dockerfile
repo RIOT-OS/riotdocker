@@ -31,6 +31,14 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
 ARG LLVM_VERSION=17
+# clang-format is installed in static-test-tools, make sure that the LLVM_VERSION
+# arguments are kept in sync!
+RUN \
+    dpkg -l clang-format-${LLVM_VERSION} > /dev/null 2>&1 || { \
+        echo 'LLVM_VERSION of static-test-tools and riotbuild are not in sync!' >&2; \
+        exit 1; \
+    }
+
 RUN \
     dpkg --add-architecture i386 >&2 && \
     echo 'Update the package index files to latest available versions' >&2 && \
@@ -41,7 +49,6 @@ RUN \
         llvm-${LLVM_VERSION}-dev \
         clang-${LLVM_VERSION} \
         clang-tools-${LLVM_VERSION} \
-        clang-format-${LLVM_VERSION} \
         libclang-${LLVM_VERSION}-dev \
         lld-${LLVM_VERSION} \
     && echo 'Installing native toolchain and build system functionality' >&2 && \

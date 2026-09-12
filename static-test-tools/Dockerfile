@@ -13,11 +13,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
+# The LLVM_VESRION has to be kept in sync with riotbuild/Dockerfile!
+ARG LLVM_VERSION=17
+
 RUN \
     echo 'Update the package index files to latest available versions' >&2 && \
     apt-get update && \
     echo 'Installing static test tools' >&2 && \
     apt-get -y --no-install-recommends install \
+        clang-format-${LLVM_VERSION} \
         coccinelle \
         cppcheck \
         curl \
