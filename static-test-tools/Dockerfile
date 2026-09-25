@@ -14,7 +14,7 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 # The LLVM_VESRION has to be kept in sync with riotbuild/Dockerfile!
-ARG LLVM_VERSION=17
+ARG LLVM_VERSION=20
 
 RUN \
     echo 'Update the package index files to latest available versions' >&2 && \
