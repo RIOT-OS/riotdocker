@@ -30,7 +30,7 @@ COPY files/libsocketcan2_0.0.11-1_i386.deb /pkgs/libsocketcan2_0.0.11-1_i386.deb
 #  updated base OS image. This can be forced with `--pull` flag.
 # This is all done in a single RUN command to reduce the number of layers and to
 # allow the cleanup to actually save space.
-ARG LLVM_VERSION=17
+ARG LLVM_VERSION=20
 # clang-format is installed in static-test-tools, make sure that the LLVM_VERSION
 # arguments are kept in sync!
 RUN \
