@@ -19,7 +19,9 @@ RUN \
         apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install dwq (disque work queue)
-RUN pip3 install dwq==0.1.0
+# redis-py >= 8.0 (2026-05-28) opens every connection with a RESP3 "HELLO"
+# handshake, which disque does not understand, so dwq cannot connect at all.
+RUN pip3 install dwq==0.1.0 "redis<8"
 
 # install hiredis -- not required directly, but redis (from dwq) will spew
 # warnings otherwise that break things somewhere further down the line.
