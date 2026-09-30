@@ -35,10 +35,19 @@ if ! id "$(id -u)" >/dev/null 2>/dev/null; then
         # Fallback to UID:UID if the container is run without setting a GID
 	echo -e "\e[33mWarning: The Docker User ID is $(id -u), but the" \
 		"Group ID is 0 (root), update your RIOT repository or check" \
-		"the Docker call!\e[0m"
+		"the Docker call!\e[0m" >&2
         create_user "$(id -u)" "$(id -u)"
     else
         create_user "$(id -u)" "$(id -g)"
+    fi
+
+    # create_user ignores the exit codes of groupadd/useradd, so check the
+    # result instead of its exit code.
+    if ! id $(id -u) >/dev/null 2>/dev/null; then
+        echo -e "\e[33mWarning: could not create a Docker user with" \
+             "uid $(id -u) (gid $(id -g))! Files and directories shared" \
+             "between the host and container may not be accessible by the" \
+             "host user account!\e[0m" >&2
     fi
 fi
 export HOME=/data/riotbuild
