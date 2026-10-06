@@ -25,26 +25,7 @@ kaspar@schleiser.de.
 
     $ sudo useradd -r -d /srv/murdock murdock
 
-2. Extract murdock_slave_homedir.tgz into /srv
-   (the archive contains ssh configuration)
+2. add the `id_rsa_murdock-slave` file from Kaspar to /home/murdock/.ssh
 
-   sudo tar -C /srv -xvf murdock_slave_homedir.tgz
+3. tbd
 
-3. make sure murdock user can ssh "murdock" without password
-
-    $ sudo su -s /bin/sh - murdock
-    $ ssh murdock && echo OK!
-
-4a. Now either start the murdock slave manually:
-
-    $ sh murdock-slave-init.sh start
-
-Or install systemd service:
-
-4b. install helper script and systemd service
-
-    $ sudo cp murdock-slave-init.sh /usr/local/bin
-    $ sudo cp murdock-slave.service /etc/systemd/system
-    $ sudo systemctl daemon-reload
-    $ sudo systemctl enable murdock-slave
-    $ sudo systemctl start murdock-slave
