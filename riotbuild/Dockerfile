@@ -230,7 +230,7 @@ RUN echo 'Installing ESP32 GDB for RISC-V' >&2 && \
     curl -L ${ESP32_GDB_URL} | tar -C /opt/esp -xz
 ENV PATH=$PATH:/opt/esp/riscv32-esp-elf-gdb/bin
 
-ARG PICOLIBC_REPO=https://github.com/keith-packard/picolibc
+ARG PICOLIBC_REPO=https://github.com/picolibc/picolibc
 ARG PICOLIBC_TAG=1.4.6
 ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
 ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
