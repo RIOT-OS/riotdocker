@@ -30,11 +30,6 @@ RUN pip3 install hiredis
 # install testrunner dependencies
 RUN pip3 install click
 
-# install newer ccache package
-ARG CCACHE_TGZ=ccache-4.7.4-linux-x86_64.tar.xz
-COPY files/${CCACHE_TGZ}  /
-RUN tar -xvf /${CCACHE_TGZ} --strip-components=1 -C/usr/local/bin && rm /${CCACHE_TGZ}
-
 # install murdock slave startup script
 COPY murdock_slave.sh /usr/bin/murdock_slave
 
