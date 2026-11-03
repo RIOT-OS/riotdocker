@@ -77,6 +77,10 @@ or test of your liking:
 BUILD_IN_DOCKER=1 DOCKER_IMAGE=f610ef8e4bbd BOARD=nrf52840dk make -C tests/sys/shell
 ```
 
+## Setting up a Murdock Worker
+
+Please refer to https://github.com/RIOT-OS/murdock-worker
+
 ## Notes for Release Managers
 
 The version in `.github/workflows/build.yml` has to be advanced on every RIOT

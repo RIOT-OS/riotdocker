@@ -56,7 +56,7 @@ jobs:
     needs: [check-secret]
     env:
       RIOT_BRANCH: 'master'
-      VERSION_TAG: '2026.10'
+      VERSION_TAG: '2027.01'
       DOCKER_REGISTRY: "${{ secrets.DOCKER_REGISTRY || 'local' }}"
 
     steps:
