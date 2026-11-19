@@ -110,28 +110,30 @@ RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /pkgs
 
 # Install ARM GNU embedded toolchain
-# For updates, see https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-ARG ARM_URLBASE=https://developer.arm.com/-/media/Files/downloads/gnu-rm
-ARG ARM_URL=${ARM_URLBASE}/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
-ARG ARM_MD5=2383e4eb4ea23f248d33adc70dc3227e
-ARG ARM_FOLDER=gcc-arm-none-eabi-10.3-2021.10
+# For updates, see https://gitlab.arm.com/tooling/gnu-toolchains-for-arm
+ARG ARM_URL=https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/15.3.rel2/arm-gnu-toolchain-15.3.rel2-x86_64-arm-none-eabi.tar.xz
+ARG ARM_SHA256=463df9665c246fa13bab2102115bbf83440661b6eb70b44f3dfd4712ca30037a
+ARG ARM_FOLDER=arm-gnu-toolchain-15.3.rel2-x86_64-arm-none-eabi
 RUN echo 'Installing arm-none-eabi toolchain from arm.com' >&2 && \
     mkdir -p /opt && \
-    curl -L -o /opt/gcc-arm-none-eabi.tar.bz2 ${ARM_URL} && \
-    echo "${ARM_MD5} /opt/gcc-arm-none-eabi.tar.bz2" | md5sum -c && \
-    tar -C /opt -jxf /opt/gcc-arm-none-eabi.tar.bz2 && \
-    rm -f /opt/gcc-arm-none-eabi.tar.bz2 && \
+    curl -L -o /opt/gcc-arm-none-eabi.tar.xz ${ARM_URL} && \
+    echo "${ARM_SHA256} /opt/gcc-arm-none-eabi.tar.xz" | sha256sum -c && \
+    tar -C /opt -xf /opt/gcc-arm-none-eabi.tar.xz && \
+    rm -f /opt/gcc-arm-none-eabi.tar.xz && \
     echo 'Removing documentation' >&2 && \
-    rm -rf /opt/gcc-arm-none-eabi-*/share/doc
+    rm -rf /opt/${ARM_FOLDER}/share/doc
     # No need to dedup, the ARM toolchain is already using hard links for the duplicated files
 
 ENV PATH=${PATH}:/opt/${ARM_FOLDER}/bin
 
 # Install RISC-V binary toolchain
-ARG RISCV_VERSION=13.2.0-2
+ARG RISCV_VERSION=15.2.0-1
+ARG RISCV_SHA256=aaaa8060c914851a3e5ee1ba82cc3d6f80972f90638a05c6e823a37557a33758
 RUN mkdir -p /opt && \
-        wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-elf-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
-        | tar -C /opt -xz && \
+        wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-elf-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O /opt/riscv.tar.gz && \
+    echo "${RISCV_SHA256} /opt/riscv.tar.gz" | sha256sum -c && \
+    tar -C /opt -xzf /opt/riscv.tar.gz && \
+    rm -f /opt/riscv.tar.gz && \
     echo 'Removing documentation' >&2 && \
       rm -rf /opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/share/doc && \
     echo 'Deduplicating binaries' >&2 && \
@@ -231,7 +233,7 @@ RUN echo 'Installing ESP32 GDB for RISC-V' >&2 && \
 ENV PATH=$PATH:/opt/esp/riscv32-esp-elf-gdb/bin
 
 ARG PICOLIBC_REPO=https://github.com/picolibc/picolibc
-ARG PICOLIBC_TAG=1.4.6
+ARG PICOLIBC_TAG=1.8.12
 ARG PICOLIBC_URL=${PICOLIBC_REPO}/archive/${PICOLIBC_TAG}.tar.gz
 ARG PICOLIBC_ARCHIVE=${PICOLIBC_TAG}.tar.gz
 
@@ -244,16 +246,22 @@ RUN echo 'Building and Installing PicoLIBC' >&2 && \
     cd picolibc-${PICOLIBC_TAG}
 
 COPY cross-riscv-none-elf.txt /usr/src/picolibc/picolibc-${PICOLIBC_TAG}/
+# picolibc >= 1.8.11 adds the c++config.h directory of a picolibc-built
+# libstdc++ to the cpp spec, which also applies to C. It does not exist here
+# and breaks -Werror=missing-include-dirs. Not yet upstream, see the patch.
+COPY files/picolibc-*.patch /usr/src/picolibc/patches/
 
 RUN cd /usr/src/picolibc/picolibc-${PICOLIBC_TAG} && \
     which riscv-none-elf-gcc && \
     ls -al /opt/xpack-riscv-none-elf-gcc-${RISCV_VERSION}/bin && \
+    echo 'Applying picolibc patches' >&2 && \
+    for p in /usr/src/picolibc/patches/*.patch; do git apply -v "$p" || exit 1; done && \
     mkdir build-arm build-riscv build-esp32 && \
     cd build-riscv && \
-    meson .. -Dtests=true -Dmultilib=false -Dincludedir=picolibc/riscv-none-elf/include -Dlibdir=picolibc/riscv-none-elf/lib --cross-file ../cross-riscv-none-elf.txt && \
+    meson setup -Dmultilib=false -Dincludedir=picolibc/riscv-none-elf/include -Dlibdir=picolibc/riscv-none-elf/lib --cross-file ../cross-riscv-none-elf.txt .. && \
     ninja && ninja install && \
     cd ../build-arm && \
-    sh ../do-arm-configure && \
+    meson setup -Dincludedir=picolibc/arm-none-eabi/include -Dlibdir=picolibc/arm-none-eabi/lib --cross-file ../scripts/cross-arm-none-eabi.txt .. && \
     ninja && ninja install
 
 # No need to keep the sources around
