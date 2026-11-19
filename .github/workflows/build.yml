@@ -155,7 +155,7 @@ jobs:
           # Some of the above are executed by root, creating ~/.cargo/git as
           # that user, blocking downloads of own libraries.
           rm -rf ~/.cargo
-          RIOT/dist/tools/compile_test/compile_like_murdock.py -a $APPLICATIONS -b $BOARDS -t $TOOLCHAIN -j16
+          RIOT/dist/tools/compile_test/compile_like_murdock.py -a $APPLICATIONS -b $BOARDS -t $TOOLCHAIN -j16 -vvv
         env:
           BUILD_IN_DOCKER: 1
           DOCKER_IMAGE: ${{ env.DOCKER_REGISTRY }}/riotbuild:latest
