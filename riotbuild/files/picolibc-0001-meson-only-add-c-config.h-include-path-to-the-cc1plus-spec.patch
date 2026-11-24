@@ -1,0 +1,98 @@
+From 205df538f9f2396b860e9454ff7639a079c4e2e6 Mon Sep 17 00:00:00 2001
+From: crasbe <crasbe@gmail.com>
+Date: Thu, 19 Nov 2026 14:12:42 +0100
+Subject: [PATCH] meson: only add c++config.h include path to the cc1plus spec
+
+PR #1146 added the directory holding c++config.h to SPECS_ISYSTEM,
+which is used in both the cpp and the cc1plus spec. As the cpp spec
+applies to C compilations as well, every C compilation now gets an
+`-isystem` path that is only relevant for C++.
+
+When picolibc is installed next to a toolchain whose libstdc++ is not
+built for picolibc (e.g. the Arm GNU Toolchain, which ships a newlib
+based libstdc++), that directory does not exist. Projects building with
+`-Werror=missing-include-dirs` (e.g. RIOT) then fail to compile any C
+file:
+
+  cc1: error: .../include/c++/15.3.1/arm-none-eabi/thumb/v7e-m+fp/hard:
+       No such file or directory [-Werror=missing-include-dirs]
+
+Move the c++config.h path to a separate SPECS_CXX_ISYSTEM variable that
+is only used in the cc1plus spec.
+---
+ CMakeLists.txt           | 1 +
+ meson.build              | 4 +++-
+ picolibc-native.specs.in | 2 +-
+ picolibc.specs.in        | 2 +-
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c9b9ca90b..7afa8ffdf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -333,6 +333,7 @@ set(CC1PLUS_SPEC "")
+ set(ADDITIONAL_LIBS "")
+ set(SPECS_EXTRA "")
+ set(SPECS_ISYSTEM "-isystem ${PROJECT_BINARY_DIR}/${include}")
++set(SPECS_CXX_ISYSTEM "")
+ set(SPECS_LIBPATH "-L${PROJECT_BINARY_DIR}")
+ set(SPECS_STARTFILE "${PROJECT_BINARY_DIR}/crt0.o")
+ string(APPEND SPECS_PRINTF "%{DPICOLIBC_FLOAT_PRINTF_SCANF:--defsym=vfprintf=__f_vfprintf}"
+diff --git a/meson.build b/meson.build
+index 2cf5bdae5..aee37a89a 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2182,6 +2182,7 @@ crt0_default = meson.get_external_property('crt0_default', 'crt0')
+ 
+ if system_libc
+   specs_isystem = ''
++  specs_cxx_isystem = ''
+   specs_libpath = ''
+   specs_libgccpath = ''
+   # The '%s' here asks gcc to search for this file in the 'usual' library path
+@@ -2246,7 +2247,7 @@ else
+   cxxconfig_isystem_buildtype = isystem_buildtype / cxxconfig_path_postfix
+   cxxconfig_isystem_gen = isystem_gen / cxxconfig_path_postfix
+ 
+-  specs_isystem = specs_isystem + ' -isystem ' + specs_option_format.format(cxxconfig_isystem_prefix, cxxconfig_isystem_buildtype, cxxconfig_isystem_gen)
++  specs_cxx_isystem = '-isystem ' + specs_option_format.format(cxxconfig_isystem_prefix, cxxconfig_isystem_buildtype, cxxconfig_isystem_gen)
+ 
+   #
+   # Build the non-multilib -L value
+@@ -2370,6 +2371,7 @@ endif
+ 
+ specs_data = configuration_data()
+ specs_data.set('SPECS_ISYSTEM', specs_isystem)
++specs_data.set('SPECS_CXX_ISYSTEM', specs_cxx_isystem)
+ specs_data.set('SPECS_LIBGCC_PATH', specs_libgccpath)
+ specs_data.set('SPECS_LIBPATH', specs_libpath)
+ specs_data.set('SPECS_STARTFILE', specs_startfile)
+diff --git a/picolibc-native.specs.in b/picolibc-native.specs.in
+index 3f4fd25e2..4fe652083 100644
+--- a/picolibc-native.specs.in
++++ b/picolibc-native.specs.in
+@@ -10,7 +10,7 @@
+ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ %(picolibc_cc1)
+ 
+ *cc1plus:
+-@SPECS_ISYSTEM@ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ @CC1PLUS_SPEC@ %(picolibc_cc1plus)
++@SPECS_ISYSTEM@ @SPECS_CXX_ISYSTEM@ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ @CC1PLUS_SPEC@ %(picolibc_cc1plus)
+ 
+ *link:
+ @SPECS_PRINTF@ @SPECS_LIBPATH@ @LINK_SPEC@ %(picolibc_link)
+diff --git a/picolibc.specs.in b/picolibc.specs.in
+index eedb4ac17..14c6ebebc 100644
+--- a/picolibc.specs.in
++++ b/picolibc.specs.in
+@@ -11,7 +11,7 @@
+ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ %(picolibc_cc1)
+ 
+ *cc1plus:
+-@SPECS_ISYSTEM@ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ @CC1PLUS_SPEC@ %(picolibc_cc1plus)
++@SPECS_ISYSTEM@ @SPECS_CXX_ISYSTEM@ @TLSMODEL@ @STACKGUARD@ @CC1_SPEC@ @CC1PLUS_SPEC@ %(picolibc_cc1plus)
+ 
+ *link_libgcc:
+ @SPECS_LIBGCC_PATH@ %(picolibc_link_libgcc)
+-- 
+2.43.0
+
